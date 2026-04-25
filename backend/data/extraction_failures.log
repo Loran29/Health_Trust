@@ -248,3 +248,4785 @@ raw_model_output:
   "confidence_interval": [40, 60],
   "reasoning_summary": "Facility claims extensive capabilities but lacks necessary equipment and staff, leading to multiple contradictions."
 }
+====================================================================================================
+facility: Aaditya Poly Clinic | city: Hyderabad | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='unknown', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaditya-poly-clinic-hyderabad",
+  "facility_name": "Aaditya Poly Clinic",
+  "city": "Hyderabad",
+  "state": "Telangana",
+  "latitude": 17.3662452697753,
+  "longitude": 78.4289245605468,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, ophthalmology, familyMedicine, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "dermatology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, ophthalmology, familyMedicine, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, ophthalmology, familyMedicine, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, ophthalmology, familyMedicine, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "unknown",
+      "status": "unknown",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine, gynecologyAndObstetrics",
+      "why_contradictory": "A clinic type facility cannot support family medicine and internal medicine specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "dermatology, ophthalmology, familyMedicine, gynecologyAndObstetrics, internalMedicine, physicalMedicineAndRehabilitation",
+      "why_contradictory": "Facility claims 6 unrelated specialties without supporting infrastructure.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Facility claims high-acuity capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "1",
+      "why_contradictory": "Facility claims advanced capabilities with only 1 doctor on staff.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Polyclinics and Eye Clinics",
+      "why_contradictory": "Facility claims to be a polyclinic without adequate staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties but lacks necessary equipment and staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: A2Z Care Pharmacy | city: Habra | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "a2z-care-pharmacy-habra",
+  "facility_name": "A2Z Care Pharmacy",
+  "city": "Habra",
+  "state": "West Bengal",
+  "latitude": 22.8094749450683,
+  "longitude": 88.6004791259765,
+  "facility_type": "farmacy",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, cardiology, otolaryngology, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, cardiology, otolaryngology, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Provides 24-hour doctor support, Offers free home delivery service..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "pediatrics, cardiology, otolaryngology, gynecologyAndObstetrics, internalMedicine, orthopedicSurgery",
+      "why_contradictory": "Pharmacy type cannot support high-acuity specialties like pediatrics and cardiology.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Provides 24-hour doctor support",
+      "why_contradictory": "No evidence of staff or equipment to support 24/7 operations.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claims high-acuity capabilities without any supporting equipment.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting infrastructure, leading to multiple contradictions."
+}
+====================================================================================================
+facility: A2z Imagings and Diagnostic Centre | city: Bahadurgarh | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "a2z-imagings-and-diagnostic-centre-bahadurgarh",
+  "facility_name": "A2z Imagings and Diagnostic Centre",
+  "city": "Bahadurgarh",
+  "state": "Haryana",
+  "latitude": 28.6961116790771,
+  "longitude": 76.9318695068359,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, radiology"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pathology, familyMedicine, radiology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24 hours"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, radiology",
+      "why_contradictory": "Clinics typically do not provide family medicine services.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24 hours",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims family medicine services but is a clinic, raising concerns about capability and 24/7 operation without evidence."
+}
+====================================================================================================
+facility: 5 Elements Wellness Clinic Center | city: Edappally | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.5.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "5-elements-wellness-clinic-center-edappally",
+  "facility_name": "5 Elements Wellness Clinic Center",
+  "city": "Edappally",
+  "state": "Kerala",
+  "latitude": 11.7259759902954,
+  "longitude": 77.4125823974609,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, psychiatry, allergyAndImmunology, hairAndNailDisorders..."
+    },
+    {
+      "capability": "mental_health",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "psychiatry, developmental–behavioralPediatrics, headacheMedicine..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "oncology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "5 Elements Wellness Clinic Center. Health, Healing & Happiness..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiology, obstetrics, oncology",
+      "why_contradictory": "High-acuity capabilities claimed with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "runs 24/7",
+      "why_contradictory": "No staff or equipment to support 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without necessary equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aadarsh Superspeciality Homoeo Clinic | city: Patna | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aadarsh-superspeciality-homoeo-clinic-patna",
+  "facility_name": "Aadarsh Superspeciality Homoeo Clinic",
+  "city": "Patna",
+  "state": "Bihar",
+  "latitude": 25.6266288757324,
+  "longitude": 85.0954360961914,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "reproductiveEndocrinologyAndInfertility, familyMedicine, dermatology"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "reproductiveEndocrinologyAndInfertility, familyMedicine, dermatology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Clinic is marked as Always open on Facebook"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "reproductiveEndocrinologyAndInfertility, familyMedicine, dermatology",
+      "why_contradictory": "Clinic type cannot support high-acuity specialties like reproductive endocrinology.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "reproductiveEndocrinologyAndInfertility",
+      "why_contradictory": "Claimed specialty requires equipment that is not listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Always open",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity specialties without supporting infrastructure, leading to contradictions."
+}
+====================================================================================================
+facility: 7 Star Healthcare (Hospital) | city: Delhi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "7-star-healthcare-hospital-delhi",
+  "facility_name": "7 Star Healthcare (Hospital)",
+  "city": "Delhi",
+  "state": "Delhi",
+  "latitude": 28.5528373718261,
+  "longitude": 77.2993621826171,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "reproductiveEndocrinologyAndInfertility"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "cardiacSurgery"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "radiology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiacSurgery",
+      "why_contradictory": "Claimed cardiac surgery without sufficient equipment to support such capabilities.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "cardiacSurgery",
+      "why_contradictory": "Claimed cardiac surgery capability with no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 ultrasound imaging services",
+      "why_contradictory": "Claimed 24/7 services without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without adequate equipment or staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: 7 Star Healthcare (Hospital) | city: Delhi | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "7-star-healthcare-hospital-delhi",
+  "facility_name": "7 Star Healthcare (Hospital)",
+  "city": "Delhi",
+  "state": "Delhi",
+  "latitude": 28.5528373718261,
+  "longitude": 77.2993621826171,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "reproductiveEndocrinologyAndInfertility"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "cardiacSurgery"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "radiology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiacSurgery",
+      "why_contradictory": "Claimed cardiac surgery without sufficient equipment to support such capabilities.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "cardiacSurgery",
+      "why_contradictory": "Claimed cardiac surgery capability with no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 ultrasound imaging services",
+      "why_contradictory": "Claimed 24/7 services without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without adequate equipment or staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: 7 Star Healthcare (Hospital) | city: Delhi | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Aadinath Dental Care | city: Lalitpur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='oral_and_maxillofacial_surgery', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aadinath-dental-care-lalitpur",
+  "facility_name": "Aadinath Dental Care",
+  "city": "Lalitpur",
+  "state": "Uttar Pradesh",
+  "latitude": 24.6890563964843,
+  "longitude": 78.424575805664,
+  "facility_type": "dentist",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, prosthodontics, aestheticDentistry, oralAndMaxillofacialSurgery, dentistry..."
+    },
+    {
+      "capability": "oral_and_maxillofacial_surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, prosthodontics, aestheticDentistry, oralAndMaxillofacialSurgery, dentistry..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, prosthodontics, aestheticDentistry, oralAndMaxillofacialSurgery, dentistry",
+      "why_contradictory": "A dental clinic cannot claim family medicine or unrelated specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming oral and maxillofacial surgery without any equipment is contradictory.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple unrelated specialties and lacks necessary equipment, leading to contradictions."
+}
+====================================================================================================
+facility: Aaradhya Aankh Asptal and Nursing Home | city: Ghazipur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaradhya-aankh-asptal-and-nursing-home-ghazipur",
+  "facility_name": "Aaradhya Aankh Asptal and Nursing Home",
+  "city": "Ghazipur",
+  "state": "Uttar Pradesh",
+  "latitude": 25.6816177368164,
+  "longitude": 83.4739837646484,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, ophthalmology"
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Has sophisticated machines"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24/7, Located in Ghazipur, Uttar Pradesh"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24/7",
+      "why_contradictory": "No supporting staff or equipment details provided to validate 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 operation without evidence of staff or equipment, but has confirmed ophthalmology capabilities."
+}
+====================================================================================================
+facility: Aarshi Hospital - Bardoli | city: Bardoli | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aarshi-hospital-bardoli-bardoli",
+  "facility_name": "Aarshi Hospital - Bardoli",
+  "city": "Bardoli",
+  "state": "Gujarat",
+  "latitude": 21.1276912689209,
+  "longitude": 73.1217193603515,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, neurology, dermatology, radiology, urology, otolaryngology..."
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Emergency department is present as indicated by signage in facility photos..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecologyAndObstetrics, internalMedicine, generalSurgery"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Emergency services operate 24/7 at Aarshi Hospital"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Kidney dialysis, Emergency department is present...",
+      "why_contradictory": "High-acuity capabilities claimed with empty equipment field.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "Emergency services operate 24/7...",
+      "why_contradictory": "Advanced capabilities claimed with null number of doctors.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities but lacks supporting equipment and staff data."
+}
+====================================================================================================
+facility: Aaradhya Aankh Asptal and Nursing Home | city: Ghazipur | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaradhya-aankh-asptal-and-nursing-home-ghazipur",
+  "facility_name": "Aaradhya Aankh Asptal and Nursing Home",
+  "city": "Ghazipur",
+  "state": "Uttar Pradesh",
+  "latitude": 25.6816177368164,
+  "longitude": 83.4739837646484,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, ophthalmology"
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Has sophisticated machines"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24/7, Located in Ghazipur, Uttar Pradesh"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24/7",
+      "why_contradictory": "No supporting staff or equipment details provided to validate 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 operation without evidence of staff or equipment, but has confirmed ophthalmology capabilities."
+}
+====================================================================================================
+facility: Aaradhya Aankh Asptal and Nursing Home | city: Ghazipur | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: AaTik Neuro &Chiro Clinic | city: Uttam Nagar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aatik-neuro-chiro-clinic-uttam-nagar",
+  "facility_name": "AaTik Neuro &Chiro Clinic",
+  "city": "Uttam Nagar",
+  "state": "Delhi",
+  "latitude": 28.62158203125,
+  "longitude": 77.0619049072265,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricNeurodevelopmentalDisabilities, neurology, childNeurology, familyMedicine"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricNeurodevelopmentalDisabilities, neurology, childNeurology, familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine",
+      "why_contradictory": "Clinics typically do not provide family medicine services.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "pediatrics, neurology",
+      "why_contradictory": "No equipment listed to support high-acuity pediatric or neurological care.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "pediatrics, neurology",
+      "why_contradictory": "Claimed capabilities without any listed doctors to provide care.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims pediatric and neurological capabilities but lacks necessary equipment and staff, leading to multiple contradictions."
+}
+====================================================================================================
+facility: Aashirwad Healthcare Centre | city: Chandausi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aashirwad-healthcare-centre-chandausi",
+  "facility_name": "Aashirwad Healthcare Centre",
+  "city": "Chandausi",
+  "state": "Uttar Pradesh",
+  "latitude": 28.4450511932373,
+  "longitude": 78.7860260009765,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, neurology, cardiology, internalMedicine"
+    },
+    {
+      "capability": "cardiology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, neurology, cardiology, internalMedicine"
+    },
+    {
+      "capability": "emergency",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Offers 24/7 emergency care"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Offers 24/7 emergency care",
+      "why_contradictory": "No supporting staff or equipment to validate 24/7 emergency care.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims emergency care without evidence of necessary staff or equipment, raising concerns about capability validity."
+}
+====================================================================================================
+facility: Aarya Women's Hospital | city: Ahmedabad | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aarya-women-s-hospital-ahmedabad",
+  "facility_name": "Aarya Women's Hospital",
+  "city": "Ahmedabad",
+  "state": "Gujarat",
+  "latitude": 23.0704498291015,
+  "longitude": 72.5431976318359,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Normal deliveries, Offers gynecologic endoscopic surgeries, Provides delivery services..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "maternalFetalMedicineOrPerinatology, reproductiveEndocrinologyAndInfertility, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "capability",
+      "evidence_snippet": "24/7 availability of trained nursing and medical staff..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "capability",
+      "claim": "24/7 availability of trained nursing and medical staff",
+      "why_contradictory": "No staff count provided to support 24/7 claims.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 service without staff evidence, but confirms obstetric capabilities through procedures."
+}
+====================================================================================================
+facility: AaTik Neuro &Chiro Clinic | city: Uttam Nagar | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aatik-neuro-chiro-clinic-uttam-nagar",
+  "facility_name": "AaTik Neuro &Chiro Clinic",
+  "city": "Uttam Nagar",
+  "state": "Delhi",
+  "latitude": 28.62158203125,
+  "longitude": 77.0619049072265,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricNeurodevelopmentalDisabilities, neurology, childNeurology, familyMedicine"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricNeurodevelopmentalDisabilities, neurology, childNeurology, familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine",
+      "why_contradictory": "Clinics typically do not provide family medicine services.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "pediatrics, neurology",
+      "why_contradictory": "No equipment listed to support high-acuity pediatric or neurological care.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "pediatrics, neurology",
+      "why_contradictory": "Claimed capabilities without any listed doctors to provide care.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims pediatric and neurological capabilities but lacks necessary equipment and staff, leading to multiple contradictions."
+}
+====================================================================================================
+facility: AaTik Neuro &Chiro Clinic | city: Uttam Nagar | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Aashirwad Emergency Hospital,Thaldka -Nohar | city: Nohar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aashirwad-emergency-hospital-thaldka-nohar-nohar",
+  "facility_name": "Aashirwad Emergency Hospital,Thaldka -Nohar",
+  "city": "Nohar",
+  "state": "Rajasthan",
+  "latitude": 29.1864128112792,
+  "longitude": 74.7727355957031,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24x7 service available."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "emergency services",
+      "why_contradictory": "Claiming emergency services without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "emergency services",
+      "why_contradictory": "Claiming emergency services with no doctors listed is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 service available.",
+      "why_contradictory": "Claiming 24/7 service without supporting staff or equipment is contradictory.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims emergency services but lacks necessary equipment and staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aatmiy Critical Care Hospital | city: Surendranagar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aatmiy-critical-care-hospital-surendranagar",
+  "facility_name": "Aatmiy Critical Care Hospital",
+  "city": "Surendranagar",
+  "state": "Gujarat",
+  "latitude": 22.724323272705,
+  "longitude": 71.640396118164,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "icu",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "none"
+    },
+    {
+      "capability": "emergency",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "none"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24 hours emergency and ICU care"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Provides ICU care",
+      "why_contradictory": "ICU care claimed but no equipment listed to support this capability.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Provides 24/7 emergency care",
+      "why_contradictory": "Emergency care claimed but no equipment listed to support this capability.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24 hours emergency and ICU care",
+      "why_contradictory": "Claiming 24/7 care without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without any supporting equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aaxis Kidney & Prostate Center | city: Bangalore | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='urology', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaxis-kidney-prostate-center-bangalore",
+  "facility_name": "Aaxis Kidney & Prostate Center",
+  "city": "Bangalore",
+  "state": "Karnataka",
+  "latitude": 13.020206451416,
+  "longitude": 77.7089233398437,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "surgery",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Laser equipment for HoLEP and RIRS, Holmium laser system for HoLEP"
+    },
+    {
+      "capability": "urology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "andrologyAndMaleFertility, urologicOncology, urology, nephrology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "numberDoctors",
+      "evidence_snippet": "Has 1 doctor on staff"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine",
+      "why_contradictory": "A clinic type facility cannot support family or internal medicine specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "Has 1 doctor on staff",
+      "why_contradictory": "Advanced capabilities claimed with only 1 doctor on staff.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced urology capabilities but lacks sufficient staff and has specialty mismatches."
+}
+====================================================================================================
+facility: Aasim Health Care Clinic | city: Alwar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aasim-health-care-clinic-alwar",
+  "facility_name": "Aasim Health Care Clinic",
+  "city": "Alwar",
+  "state": "Rajasthan",
+  "latitude": 27.8230247497558,
+  "longitude": 76.7385864257812,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "complete medical checkup and treatment services",
+      "why_contradictory": "Claimed capabilities require equipment, but none is listed.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "complete medical checkup and treatment services",
+      "why_contradictory": "Claimed capabilities imply need for staff, but numberDoctors is null.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims primary care capabilities but lacks necessary equipment and staff."
+}
+====================================================================================================
+facility: Aasim Health Care Clinic | city: Alwar | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aasim-health-care-clinic-alwar",
+  "facility_name": "Aasim Health Care Clinic",
+  "city": "Alwar",
+  "state": "Rajasthan",
+  "latitude": 27.8230247497558,
+  "longitude": 76.7385864257812,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "complete medical checkup and treatment services",
+      "why_contradictory": "Claimed capabilities require equipment, but none is listed.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "complete medical checkup and treatment services",
+      "why_contradictory": "Claimed capabilities imply need for staff, but numberDoctors is null.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims primary care capabilities but lacks necessary equipment and staff."
+}
+====================================================================================================
+facility: Aasim Health Care Clinic | city: Alwar | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Aastha Fertility Care | city: Jaipur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aastha-fertility-care-jaipur",
+  "facility_name": "Aastha Fertility Care",
+  "city": "Jaipur",
+  "state": "Rajasthan",
+  "latitude": 26.8551483154296,
+  "longitude": 75.8226318359375,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "maternalFetalMedicineOrPerinatology, reproductiveEndocrinologyAndInfertility..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "procedure",
+      "evidence_snippet": "High risk pregnancy and delivery management, Intracytoplasmic Sperm Injection (ICSI)..."
+    },
+    {
+      "capability": "anesthesia",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "anesthesia, andrologyAndMaleFertility, familyMedicine, gynecologyAndObstetrics"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, gynecologyAndObstetrics"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "IVF center in Jaipur offering IVF, IUI, ICSI and other fertility treatments..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "IVF, IUI, ICSI and other fertility treatments",
+      "why_contradictory": "Claimed high-acuity capabilities without any listed equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "IVF, IUI, ICSI and other fertility treatments",
+      "why_contradictory": "Claimed advanced capabilities with no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, gynecologyAndObstetrics",
+      "why_contradictory": "Clinic type claiming family medicine and unrelated specialties.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced fertility services but lacks necessary equipment and staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aaisha Medical Center | city: Madangir | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaisha-medical-center-madangir",
+  "facility_name": "Aaisha Medical Center",
+  "city": "Madangir",
+  "state": "Delhi",
+  "latitude": 28.520788192749,
+  "longitude": 77.2340393066406,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24/7 availability"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery, ICU, NICU, PICU, oncology, dialysis",
+      "why_contradictory": "The facility claims to provide high-acuity services but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "advanced capabilities",
+      "why_contradictory": "The facility claims advanced capabilities but has no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7 availability",
+      "why_contradictory": "Claiming 24/7 service without supporting staff or equipment is misleading.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims primary care services but lacks necessary equipment and staff for advanced capabilities."
+}
+====================================================================================================
+facility: AANANDI ORTHOPEDIC SUPERSPECIALITY HOSPITAL | city: Parbhani | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aanandi-orthopedic-superspeciality-hospital-parbhani",
+  "facility_name": "AANANDI ORTHOPEDIC SUPERSPECIALITY HOSPITAL",
+  "city": "Parbhani",
+  "state": "Maharashtra",
+  "latitude": 19.2600708007812,
+  "longitude": 76.7742309570312,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "orthopedics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "orthopedicSurgery, jointReconstructionSurgery, internalMedicine"
+    },
+    {
+      "capability": "emergency",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24 hour orthopedic hospital with facilities for fracture management..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Provides 24/7 emergency orthopedic care",
+      "why_contradictory": "The facility claims emergency care but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24 hour orthopedic hospital",
+      "why_contradictory": "Claiming 24/7 service without supporting staff or equipment is excessive.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without necessary equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aaisha Medical Center | city: Madangir | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aaisha-medical-center-madangir",
+  "facility_name": "Aaisha Medical Center",
+  "city": "Madangir",
+  "state": "Delhi",
+  "latitude": 28.520788192749,
+  "longitude": 77.2340393066406,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24/7 availability"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery, ICU, NICU, PICU, oncology, dialysis",
+      "why_contradictory": "The facility claims to provide high-acuity services but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "advanced capabilities",
+      "why_contradictory": "The facility claims advanced capabilities but has no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7 availability",
+      "why_contradictory": "Claiming 24/7 service without supporting staff or equipment is misleading.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims primary care services but lacks necessary equipment and staff for advanced capabilities."
+}
+====================================================================================================
+facility: Aaisha Medical Center | city: Madangir | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Aastha RIBS | city: Patna | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aastha-ribs-patna",
+  "facility_name": "Aastha RIBS",
+  "city": "Patna",
+  "state": "Bihar",
+  "latitude": 25.6161785125732,
+  "longitude": 85.0744476318359,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "orthopedics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "orthopedicSurgery"
+    },
+    {
+      "capability": "mental_health",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "neurology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Provides 24x7 nursing"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claims high-acuity capabilities like surgery and primary care without any equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "null",
+      "why_contradictory": "Claims advanced capabilities but has no doctors listed.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Provides 24x7 nursing",
+      "why_contradictory": "Claims 24/7 services without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced capabilities but lacks necessary equipment and staff, leading to multiple contradictions."
+}
+====================================================================================================
+facility: Aanchal Hospital | city: Amleshwar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aanchal-hospital-amleshwar",
+  "facility_name": "Aanchal Hospital",
+  "city": "Amleshwar",
+  "state": "Durg",
+  "latitude": 21.2056465148925,
+  "longitude": 81.5784149169921,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "dialysis",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "nephrology, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Provides 24/7 services"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "dialysis",
+      "why_contradictory": "Dialysis is claimed but there is no equipment listed to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "dialysis",
+      "why_contradictory": "Dialysis is claimed but numberDoctors is null, indicating no staff to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "Claiming 24/7 services without supporting staff or equipment is an overreach.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Aanchal Hospital claims dialysis capabilities but lacks necessary equipment and staff, alongside overreaching claims of 24/7 service."
+}
+====================================================================================================
+facility: Aarogya Medical Centre -Raebareli | city: Raebareli | attempt: first
+validation_error:
+2 validation errors for FacilityAssessment
+capability_claims.2.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='gastroenterology', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aarogya-medical-centre-raebareli-raebareli",
+  "facility_name": "Aarogya Medical Centre -Raebareli",
+  "city": "Raebareli",
+  "state": "Uttar Pradesh",
+  "latitude": 26.2190723419189,
+  "longitude": 81.2418212890625,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, cardiology, gastroenterology, internalMedicine"
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "none"
+    },
+    {
+      "capability": "gastroenterology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "none"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "capability",
+      "evidence_snippet": "Operates 24/7"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "cardiology, gastroenterology",
+      "why_contradictory": "A clinic type facility cannot support high-acuity specialties like cardiology and gastroenterology.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiology, gastroenterology",
+      "why_contradictory": "Claimed specialties require equipment that is not present.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "capability",
+      "claim": "Operates 24/7",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity specialties without necessary equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Accura Eye Care | city: New Delhi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "accura-eye-care-new-delhi",
+  "facility_name": "Accura Eye Care",
+  "city": "New Delhi",
+  "state": "Delhi",
+  "latitude": 28.5424766540527,
+  "longitude": 77.218276977539,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricsAndStrabismusOphthalmology, ophthalmology, refractiveSurgeryOphthalmology..."
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "ophthalmology, refractiveSurgeryOphthalmology, eyeTraumaAndEmergencyEyeCare..."
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Accura Eye Care, is the super-specialty eye hospital that provides you the complete eye care..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "The facility claims surgical capabilities but has no listed equipment to support this.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "Claims to provide 24/7 services without evidence of sufficient staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Accura Eye Care claims extensive capabilities but lacks supporting equipment and staff evidence."
+}
+====================================================================================================
+facility: Abhaya Endocrinology and Diabetes Centre | city: Guwahati | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhaya-endocrinology-and-diabetes-centre-guwahati",
+  "facility_name": "Abhaya Endocrinology and Diabetes Centre",
+  "city": "Guwahati",
+  "state": "Assam",
+  "latitude": 26.1461563110351,
+  "longitude": 91.7898254394531,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, podiatry, familyMedicine, pediatricEndocrinology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, podiatry, familyMedicine, pediatricEndocrinology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "CGMS devices, Ultrasound machine, Insulin pumps"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricEndocrinology, endocrinologyAndDiabetesAndMetabolism"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24x7 patient support, Treats adults, pediatric patients..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "pediatrics, familyMedicine, endocrinologyAndDiabetesAndMetabolism",
+      "why_contradictory": "Clinic type cannot support family medicine and unrelated specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 patient support",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims broad capabilities but lacks supporting evidence and has specialty mismatches."
+}
+====================================================================================================
+facility: ABMSS Kolkata/Howrah Comprehensive Cleft Care Center | city: Kolkata | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abmss-kolkata-howrah-comprehensive-cleft-care-center-kolkata",
+  "facility_name": "ABMSS Kolkata/Howrah Comprehensive Cleft Care Center",
+  "city": "Kolkata",
+  "state": "West Bengal",
+  "latitude": 22.5812015533447,
+  "longitude": 88.3356475830078,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, craniofacialAndCleftOralMaxillofacialSurgery, orthodontics"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Comprehensive cleft care including surgery, speech therapy, orthodontia..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "Surgery is claimed but there is no equipment listed to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "runs_24_7",
+      "why_contradictory": "Claims to provide 24/7 care without evidence of staff or equipment to support this.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "craniofacialAndCleftOralMaxillofacialSurgery",
+      "why_contradictory": "Clinic type is not suitable for high-acuity surgical specialties.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims surgical capabilities without necessary equipment, and its specialty mix raises concerns."
+}
+====================================================================================================
+facility: Abhaya Endocrinology and Diabetes Centre | city: Guwahati | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhaya-endocrinology-and-diabetes-centre-guwahati",
+  "facility_name": "Abhaya Endocrinology and Diabetes Centre",
+  "city": "Guwahati",
+  "state": "Assam",
+  "latitude": 26.1461563110351,
+  "longitude": 91.7898254394531,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, podiatry, familyMedicine, pediatricEndocrinology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, podiatry, familyMedicine, pediatricEndocrinology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "CGMS devices, Ultrasound machine, Insulin pumps"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricEndocrinology, endocrinologyAndDiabetesAndMetabolism"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24x7 patient support, Treats adults, pediatric patients..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "pediatrics, familyMedicine, endocrinologyAndDiabetesAndMetabolism",
+      "why_contradictory": "Clinic type cannot support family medicine and unrelated specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 patient support",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims broad capabilities but lacks supporting evidence and has specialty mismatches."
+}
+====================================================================================================
+facility: Abhaya Endocrinology and Diabetes Centre | city: Guwahati | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Abhay Arogya Hospital | city: Chodavaram | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhay-arogya-hospital-chodavaram",
+  "facility_name": "Abhay Arogya Hospital",
+  "city": "Chodavaram",
+  "state": "Andhra Pradesh",
+  "latitude": 17.7352066040039,
+  "longitude": 83.3245239257812,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "emergency",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "emergencyMedicine, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "we take care of your health 24x7"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "emergency",
+      "why_contradictory": "Emergency care is claimed but there is no equipment listed to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7",
+      "why_contradictory": "Claiming 24x7 care without supporting staff or equipment is an overreach.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims emergency services and 24x7 care but lacks necessary equipment and staff support."
+}
+====================================================================================================
+facility: Abhayam Health Care | city: Thiruvananthapuram | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhayam-health-care-thiruvananthapuram",
+  "facility_name": "Abhayam Health Care",
+  "city": "Thiruvananthapuram",
+  "state": "Kerala",
+  "latitude": 8.50298500061035,
+  "longitude": 77.0214233398437,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dentistry, familyMedicine"
+    },
+    {
+      "capability": "emergency",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Emergency dental"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine",
+      "why_contradictory": "A dental clinic cannot provide family medicine services.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming emergency services without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Emergency dental",
+      "why_contradictory": "Claiming '24/7' services without supporting staff or equipment is contradictory.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims emergency services but lacks necessary equipment and has a specialty mismatch."
+}
+====================================================================================================
+facility: Adarsh Multispeciality Hospital Sindhanoor | city: Sindhnur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "adarsh-multispeciality-hospital-sindhanoor-sindhnur",
+  "facility_name": "Adarsh Multispeciality Hospital Sindhanoor",
+  "city": "Sindhnur",
+  "state": "Karnataka",
+  "latitude": 15.7706403732299,
+  "longitude": 76.7547988891601,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24*7 service is available here."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Provides 24/7 hospital services",
+      "why_contradictory": "High-acuity capabilities claimed with empty equipment field.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "Provides 24/7 hospital services",
+      "why_contradictory": "Claimed advanced capabilities with null number of doctors.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Provides 24/7 hospital services",
+      "why_contradictory": "Claimed 24/7 service without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 services but lacks necessary equipment and staff, leading to significant contradictions."
+}
+====================================================================================================
+facility: Aayush Ayurveda Centre | city: Kheda | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aayush-ayurveda-centre-kheda",
+  "facility_name": "Aayush Ayurveda Centre",
+  "city": "Kheda",
+  "state": "Gujarat",
+  "latitude": 22.6372470855712,
+  "longitude": 72.8906173706054,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, neurology, dermatology, familyMedicine..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, internalMedicine, orthopedicSurgery..."
+    },
+    {
+      "capability": "orthopedics",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "7 Years in Healthcare"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "orthopedicSurgery, familyMedicine, internalMedicine",
+      "why_contradictory": "A clinic type facility cannot support high-acuity specialties like orthopedic surgery.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming orthopedic surgery without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "7 Years in Healthcare",
+      "why_contradictory": "Claiming to operate 24/7 without supporting staff or equipment is contradictory.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting evidence, leading to multiple contradictions."
+}
+====================================================================================================
+facility: Abhinav Hospital | city: Kuchaman City | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhinav-hospital-kuchaman-city",
+  "facility_name": "Abhinav Hospital",
+  "city": "Kuchaman City",
+  "state": "Rajasthan",
+  "latitude": 27.1481285095214,
+  "longitude": 74.8596038818359,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24/7"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "pediatrics",
+      "why_contradictory": "Claimed pediatric capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "pediatrics",
+      "why_contradictory": "Claimed pediatric capabilities but has no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24/7",
+      "why_contradictory": "Claimed 24/7 operation without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims pediatric capabilities but lacks necessary equipment and staff, raising significant concerns."
+}
+====================================================================================================
+facility: ACE ENT Super Speciality Hospital | city: Aurangabad | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "ace-ent-super-speciality-hospital-aurangabad",
+  "facility_name": "ACE ENT Super Speciality Hospital",
+  "city": "Aurangabad",
+  "state": "Maharashtra",
+  "latitude": 19.8675880432128,
+  "longitude": 75.3531036376953,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Opening hours: Mon-Sat 09:00-22:00."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "Claimed surgery capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "runs_24_7",
+      "why_contradictory": "Claims to operate 24/7 but has limited hours.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims surgical capabilities but lacks necessary equipment and has limited operating hours."
+}
+====================================================================================================
+facility: Abhinav Skin Clinic and Laser Center | city: Azamgarh | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhinav-skin-clinic-and-laser-center-azamgarh",
+  "facility_name": "Abhinav Skin Clinic and Laser Center",
+  "city": "Azamgarh",
+  "state": "Uttar Pradesh",
+  "latitude": 26.0864543914794,
+  "longitude": 83.1882019042968,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, dermatology, cosmeticDermatology"
+    },
+    {
+      "capability": "dermatology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, dermatology, cosmeticDermatology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Operates 24/7 (Always open)"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Operates as a hospital",
+      "why_contradictory": "The facility claims to operate as a hospital but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "Operates as a hospital",
+      "why_contradictory": "The facility claims to operate as a hospital but has no doctors listed.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims hospital capabilities but lacks necessary equipment and staff, raising significant concerns."
+}
+====================================================================================================
+facility: Abhipriya Dental Clinic | city: Sikar | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "abhipriya-dental-clinic-sikar",
+  "facility_name": "Abhipriya Dental Clinic",
+  "city": "Sikar",
+  "state": "Rajasthan",
+  "latitude": 27.6248455047607,
+  "longitude": 75.1681213378906,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricDentistry, familyMedicine, orthodontics, prosthodontics, endodontics, dentistry..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatricDentistry, familyMedicine, orthodontics, prosthodontics, endodontics, dentistry..."
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "A place for complete solution to the dental problems. We provide world class dental care."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, pediatricDentistry",
+      "why_contradictory": "A dental clinic cannot claim family medicine specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "dental emergencies",
+      "why_contradictory": "Claiming to prioritize dental emergencies with no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "world class dental care",
+      "why_contradictory": "Claims advanced care without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "The clinic claims broad capabilities but lacks necessary equipment and misclassifies its specialties."
+}
+====================================================================================================
+facility: Adhya Hospital Rayachoti | city: Rayachoti | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "adhya-hospital-rayachoti-rayachoti",
+  "facility_name": "Adhya Hospital Rayachoti",
+  "city": "Rayachoti",
+  "state": "Andhra Pradesh",
+  "latitude": 14.0589790344238,
+  "longitude": 78.7624816894531,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24/7"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery, ICU, oncology capabilities implied by hospital type",
+      "why_contradictory": "The hospital claims high-acuity capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Operates 24/7",
+      "why_contradictory": "No supporting staff or equipment to validate 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims to be a hospital with 24/7 operation but lacks necessary equipment and staff to support high-acuity capabilities."
+}
+====================================================================================================
+facility: Advance Path Lab | city: Faridabad | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='neurology', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "advance-path-lab-faridabad",
+  "facility_name": "Advance Path Lab",
+  "city": "Faridabad",
+  "state": "Nit",
+  "latitude": 28.3923549652099,
+  "longitude": 77.3018493652343,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, cardiology, nuclearMedicineAndMolecularImaging, pathology"
+    },
+    {
+      "capability": "cardiology",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Performs Cardiology Test"
+    },
+    {
+      "capability": "neurology",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Performs Neurology Test"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "unknown",
+      "evidence_field": "capability",
+      "evidence_snippet": "Open 24/7 diagnostic services"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, cardiology, nuclearMedicineAndMolecularImaging, pathology",
+      "why_contradictory": "A clinic type facility cannot support family medicine and cardiology specialties adequately.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "capability",
+      "claim": "Open 24/7 diagnostic services",
+      "why_contradictory": "No supporting staff or equipment is listed to justify 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high capabilities but has mismatched specialties and lacks evidence for 24/7 operations."
+}
+====================================================================================================
+facility: AG Diagnostics (Neuberg) | city: Pune | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "ag-diagnostics-neuberg-pune",
+  "facility_name": "AG Diagnostics (Neuberg)",
+  "city": "Pune",
+  "state": "Maharashtra",
+  "latitude": 18.4696083068847,
+  "longitude": 73.8202362060546,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, cardiology, gynecologyAndObstetrics"
+    },
+    {
+      "capability": "cardiology",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "ECG machine, 2D-Echo ultrasound system"
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Ultrasound equipment, Mammography system"
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Offers ECG, TMT/Stress Test, 2D-Echo, X-ray, Ultrasonography, Mammography"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Health Check Up; Diagnostic And Pathology"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, cardiology, gynecologyAndObstetrics",
+      "why_contradictory": "A clinic type facility cannot support family medicine and gynecology specialties adequately.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Health Check Up; Diagnostic And Pathology",
+      "why_contradictory": "No staff information provided to support 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties but lacks staff data and has type mismatches, raising concerns about capability."
+}
+====================================================================================================
+facility: Advanced Dental Care and Implant Centre | city: Durgapur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "advanced-dental-care-and-implant-centre-durgapur",
+  "facility_name": "Advanced Dental Care and Implant Centre",
+  "city": "Durgapur",
+  "state": "West Bengal",
+  "latitude": 23.5614700317382,
+  "longitude": 87.2772750854492,
+  "facility_type": "dentist",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "endodontics, dentistry"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Is always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "Provides comprehensive dental treatments",
+      "why_contradictory": "The facility claims comprehensive dental treatments but has no listed equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "The facility confirms its dental capabilities but lacks necessary equipment and overreaches with 24/7 claims."
+}
+====================================================================================================
+facility: Agadya Multispeciality Dental Clinic | city: Jorhat | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agadya-multispeciality-dental-clinic-jorhat",
+  "facility_name": "Agadya Multispeciality Dental Clinic",
+  "city": "Jorhat",
+  "state": "Assam",
+  "latitude": 26.7652988433837,
+  "longitude": 94.1868057250976,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Operates an oral laser centre"
+    },
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "ophthalmology, familyMedicine, urology, vascularSurgery..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecologyAndObstetrics, Fertility"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "vascularSurgery, orthopedicSurgery"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "AGADYA MULTISPECIALITY DENTAL CLINIC, Jorhat"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, urology, vascularSurgery, gynecologyAndObstetrics",
+      "why_contradictory": "Clinic type cannot support these specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "ophthalmology, familyMedicine, urology, vascularSurgery, gynecologyAndObstetrics...",
+      "why_contradictory": "Facility claims too many unrelated specialties without support.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "vascularSurgery, orthopedicSurgery",
+      "why_contradictory": "High-acuity specialties claimed with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "1 doctor with high-acuity specialties claimed",
+      "why_contradictory": "Only one doctor cannot support advanced specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "No evidence of staff or equipment to support 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims extensive specialties unsupported by type, staff, or equipment."
+}
+====================================================================================================
+facility: AG Diagnostics (Neuberg) | city: Pune | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "ag-diagnostics-neuberg-pune",
+  "facility_name": "AG Diagnostics (Neuberg)",
+  "city": "Pune",
+  "state": "Maharashtra",
+  "latitude": 18.4696083068847,
+  "longitude": 73.8202362060546,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, cardiology, gynecologyAndObstetrics"
+    },
+    {
+      "capability": "cardiology",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "ECG machine, 2D-Echo ultrasound system"
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Ultrasound equipment, Mammography system"
+    },
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Offers ECG, TMT/Stress Test, 2D-Echo, X-ray, Ultrasonography, Mammography"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Health Check Up; Diagnostic And Pathology"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, cardiology, gynecologyAndObstetrics",
+      "why_contradictory": "A clinic type facility cannot support family medicine and gynecology specialties adequately.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Health Check Up; Diagnostic And Pathology",
+      "why_contradictory": "No staff information provided to support 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties but lacks staff data and has type mismatches, raising concerns about capability."
+}
+====================================================================================================
+facility: AG Diagnostics (Neuberg) | city: Pune | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Agape Hospital Hosur | city: Hosur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agape-hospital-hosur-hosur",
+  "facility_name": "Agape Hospital Hosur",
+  "city": "Hosur",
+  "state": "Tamil Nadu",
+  "latitude": 12.8028125762939,
+  "longitude": 77.8571319580078,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, neurology, preventiveMedicine, infectiousDiseases..."
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "orthopedicSurgery, generalSurgery, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "emergency",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "emergencyMedicine, dermatology, ophthalmology, radiology..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, endocrinologyAndDiabetesAndMetabolism..."
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "capability",
+      "evidence_snippet": "Open 24 hours, Operates 7 days a week (Monday - Sunday)..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery, emergency",
+      "why_contradictory": "High-acuity capabilities claimed but equipment field is empty.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "surgery, emergency",
+      "why_contradictory": "Advanced capabilities claimed but number of doctors is null.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced capabilities but lacks necessary equipment and staff, raising significant concerns."
+}
+====================================================================================================
+facility: Agadya Multispeciality Dental Clinic | city: Jorhat | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agadya-multispeciality-dental-clinic-jorhat",
+  "facility_name": "Agadya Multispeciality Dental Clinic",
+  "city": "Jorhat",
+  "state": "Assam",
+  "latitude": 26.7652988433837,
+  "longitude": 94.1868057250976,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Operates an oral laser centre"
+    },
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "ophthalmology, familyMedicine, urology, vascularSurgery..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecologyAndObstetrics, Fertility"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "vascularSurgery, orthopedicSurgery"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "AGADYA MULTISPECIALITY DENTAL CLINIC, Jorhat"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, urology, vascularSurgery, gynecologyAndObstetrics",
+      "why_contradictory": "Clinic type cannot support these specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "ophthalmology, familyMedicine, urology, vascularSurgery, gynecologyAndObstetrics...",
+      "why_contradictory": "Facility claims too many unrelated specialties without support.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "vascularSurgery, orthopedicSurgery",
+      "why_contradictory": "High-acuity specialties claimed with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "1 doctor with high-acuity specialties claimed",
+      "why_contradictory": "Only one doctor cannot support advanced specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "No evidence of staff or equipment to support 24/7 operations.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims extensive specialties unsupported by type, staff, or equipment."
+}
+====================================================================================================
+facility: Agadya Multispeciality Dental Clinic | city: Jorhat | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Advanced Dental & Maxillofacial Hospital | city: Gwalior | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "advanced-dental-maxillofacial-hospital-gwalior",
+  "facility_name": "Advanced Dental & Maxillofacial Hospital",
+  "city": "Gwalior",
+  "state": "Madhya Pradesh",
+  "latitude": 26.2095966339111,
+  "longitude": 78.1751403808593,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, prosthodontics, cosmeticMaxillofacialSurgery..."
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "A CENTRE OF EXCELLENCE FOR FACIAL TRAUMA , COSMETIC SURGERIES & DENTAL IMPLANTS"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "internalMedicine, prosthodontics, cosmeticMaxillofacialSurgery...",
+      "why_contradictory": "A dental hospital cannot claim internal medicine specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming surgery capabilities without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "A CENTRE OF EXCELLENCE FOR FACIAL TRAUMA...",
+      "why_contradictory": "Claiming 24/7 operations without supporting staff or equipment is overreaching.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced surgical capabilities but lacks necessary equipment and has specialty mismatches."
+}
+====================================================================================================
+facility: Aditya Hospitals / Tenali | city: Tenali | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aditya-hospitals-tenali-tenali",
+  "facility_name": "Aditya Hospitals / Tenali",
+  "city": "Tenali",
+  "state": "Andhra Pradesh",
+  "latitude": 16.2389183044433,
+  "longitude": 80.6442260742187,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "endocrinologyAndDiabetesAndMetabolism, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Operates 24/7 (Always open)."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "endocrinologyAndDiabetesAndMetabolism, internalMedicine",
+      "why_contradictory": "No equipment listed to support high-acuity capabilities.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "endocrinologyAndDiabetesAndMetabolism, internalMedicine",
+      "why_contradictory": "Claimed specialties but no doctors listed to support them.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims specialties without supporting equipment or staff, raising significant concerns."
+}
+====================================================================================================
+facility: AESTHETIC NURSING HOME | city: Mogra | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aesthetic-nursing-home-mogra",
+  "facility_name": "AESTHETIC NURSING HOME",
+  "city": "Mogra",
+  "state": "Hooghly",
+  "latitude": 22.9819984436035,
+  "longitude": 88.3733749389648,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dentistry, aestheticAndCosmeticSurgery, otolaryngology, internalMedicine"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "otolaryngology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "top player in the category Maternity Hospitals in the Hooghly..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "Claimed surgical capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "Claims to operate 24/7 without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims surgical capabilities but lacks necessary equipment, and overreaches with 24/7 claims."
+}
+====================================================================================================
+facility: Aditya Hospitals / Tenali | city: Tenali | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aditya-hospitals-tenali-tenali",
+  "facility_name": "Aditya Hospitals / Tenali",
+  "city": "Tenali",
+  "state": "Andhra Pradesh",
+  "latitude": 16.2389183044433,
+  "longitude": 80.6442260742187,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "endocrinologyAndDiabetesAndMetabolism, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Operates 24/7 (Always open)."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "endocrinologyAndDiabetesAndMetabolism, internalMedicine",
+      "why_contradictory": "No equipment listed to support high-acuity capabilities.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "endocrinologyAndDiabetesAndMetabolism, internalMedicine",
+      "why_contradictory": "Claimed specialties but no doctors listed to support them.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims specialties without supporting equipment or staff, raising significant concerns."
+}
+====================================================================================================
+facility: Aditya Hospitals / Tenali | city: Tenali | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Advanced Neuro Spine Pain Management Center - Varanasi | city: Varanasi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "advanced-neuro-spine-pain-management-center-varanasi-varanasi",
+  "facility_name": "Advanced Neuro Spine Pain Management Center - Varanasi",
+  "city": "Varanasi",
+  "state": "Uttar Pradesh",
+  "latitude": 25.2943286895751,
+  "longitude": 82.9728240966796,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "anesthesia",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "anesthesia, spineNeurosurgery, familyMedicine, internalMedicine, painMedicinePMR"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Welcome to Advanced Neuro Spine Pain Management Center, a reputed Private hospital..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "Facility claims surgical capabilities but has no listed equipment to support this.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7",
+      "why_contradictory": "Facility claims to operate 24/7 without evidence of sufficient staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims surgical capabilities and 24/7 operation but lacks necessary equipment and staff evidence."
+}
+====================================================================================================
+facility: Adikari Gopalarao Hospital | city: Narsipatnam | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "adikari-gopalarao-hospital-narsipatnam",
+  "facility_name": "Adikari Gopalarao Hospital",
+  "city": "Narsipatnam",
+  "state": "Andhra Pradesh",
+  "latitude": 17.6626663208007,
+  "longitude": 82.6187362670898,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "emergency",
+      "status": "inferred",
+      "evidence_field": "description",
+      "evidence_snippet": "Provides 24/7 emergency care..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "maternalFetalMedicineOrPerinatology, reproductiveEndocrinologyAndInfertility"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24/7 in-house doctor coverage"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiology",
+      "why_contradictory": "Cardiology claimed but no equipment listed to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7 in-house doctor coverage",
+      "why_contradictory": "Claimed 24/7 coverage without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting evidence, leading to contradictions."
+}
+====================================================================================================
+facility: ADHYA Clinic, Mallampet road, Bachupally | city: Hyderabad | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "adhya-clinic-mallampet-road-bachupally-hyderabad",
+  "facility_name": "ADHYA Clinic, Mallampet road, Bachupally",
+  "city": "Hyderabad",
+  "state": "Telangana",
+  "latitude": 17.5391502380371,
+  "longitude": 78.3814239501953,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "confirmed",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24/7"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24/7",
+      "why_contradictory": "No supporting staff or equipment to validate 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 operation without evidence of staff or equipment, leading to capability overreach."
+}
+====================================================================================================
+facility: Aether Aesthetic | city: Vadodara | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aether-aesthetic-vadodara",
+  "facility_name": "Aether Aesthetic",
+  "city": "Vadodara",
+  "state": "Gujarat",
+  "latitude": 22.315444946289,
+  "longitude": 73.1626739501953,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dermatology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, familyMedicine, proceduralDermatology, internalMedicine, gynecology..."
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecology, plasticSurgery"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Offers advanced aesthetic treatments"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine",
+      "why_contradictory": "A clinic cannot support family or internal medicine specialties without appropriate infrastructure.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming surgery capabilities without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Offers advanced aesthetic treatments",
+      "why_contradictory": "Claiming advanced capabilities without supporting staff or equipment is contradictory.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced capabilities but lacks necessary equipment and has specialty mismatches."
+}
+====================================================================================================
+facility: Adikari Gopalarao Hospital | city: Narsipatnam | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "adikari-gopalarao-hospital-narsipatnam",
+  "facility_name": "Adikari Gopalarao Hospital",
+  "city": "Narsipatnam",
+  "state": "Andhra Pradesh",
+  "latitude": 17.6626663208007,
+  "longitude": 82.6187362670898,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "emergency",
+      "status": "inferred",
+      "evidence_field": "description",
+      "evidence_snippet": "Provides 24/7 emergency care..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "maternalFetalMedicineOrPerinatology, reproductiveEndocrinologyAndInfertility"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24/7 in-house doctor coverage"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiology",
+      "why_contradictory": "Cardiology claimed but no equipment listed to support this capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24/7 in-house doctor coverage",
+      "why_contradictory": "Claimed 24/7 coverage without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting evidence, leading to contradictions."
+}
+====================================================================================================
+facility: Adikari Gopalarao Hospital | city: Narsipatnam | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Aether Aesthetic | city: Vadodara | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "aether-aesthetic-vadodara",
+  "facility_name": "Aether Aesthetic",
+  "city": "Vadodara",
+  "state": "Gujarat",
+  "latitude": 22.315444946289,
+  "longitude": 73.1626739501953,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "dermatology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "dermatology, familyMedicine, proceduralDermatology, internalMedicine, gynecology..."
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecology, plasticSurgery"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Offers advanced aesthetic treatments"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine",
+      "why_contradictory": "A clinic cannot support family or internal medicine specialties without appropriate infrastructure.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming surgery capabilities without any equipment is contradictory.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Offers advanced aesthetic treatments",
+      "why_contradictory": "Claiming advanced capabilities without supporting staff or equipment is contradictory.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced capabilities but lacks necessary equipment and has specialty mismatches."
+}
+====================================================================================================
+facility: Aether Aesthetic | city: Vadodara | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Agasthya Diagnostics | city: Srikakulam | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agasthya-diagnostics-srikakulam",
+  "facility_name": "Agasthya Diagnostics",
+  "city": "Srikakulam",
+  "state": "Andhra Pradesh",
+  "latitude": 18.3087310791015,
+  "longitude": 83.8885803222656,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24/7 (Always open)"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine",
+      "why_contradictory": "Clinics typically do not provide family medicine services without supporting infrastructure.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24/7 (Always open)",
+      "why_contradictory": "No staff or equipment to support 24/7 operations.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "pathology, clinicalPathology",
+      "why_contradictory": "Claimed capabilities require equipment, but none is listed.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims family medicine and 24/7 operation without necessary infrastructure or equipment."
+}
+====================================================================================================
+facility: Ajanta Seva Sadan Hospital | city: Chinsurah | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "ajanta-seva-sadan-hospital-chinsurah",
+  "facility_name": "Ajanta Seva Sadan Hospital",
+  "city": "Chinsurah",
+  "state": "West Bengal",
+  "latitude": 22.8933773040771,
+  "longitude": 88.3951110839843,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24 Hrs"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24 Hrs",
+      "why_contradictory": "No supporting staff or equipment to validate 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims 24/7 operation without evidence of staff or equipment, leading to a capability overreach contradiction."
+}
+====================================================================================================
+facility: Agastya Care | city: Bongaigaon | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.5.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agastya-care-bongaigaon",
+  "facility_name": "Agastya Care",
+  "city": "Bongaigaon",
+  "state": "Assam",
+  "latitude": 26.4693717956542,
+  "longitude": 90.5608367919921,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "unknown",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, familyMedicine, cardiology, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, internalMedicine, geriatricsInternalMedicine..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "description",
+      "evidence_snippet": "Offers obstetrics, gynecology, and women's health services..."
+    },
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Dental Restoration, Discolored Tooth Restoration, Teeth Straightening..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "We are a medical hub where we priotize your overall health..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, cardiology, gynecologyAndObstetrics, internalMedicine, geriatricsInternalMedicine",
+      "why_contradictory": "A clinic type facility cannot support high-acuity specialties like cardiology.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "pediatrics, familyMedicine, cardiology, gynecologyAndObstetrics, internalMedicine, geriatricsInternalMedicine, dentistry, familyPlanningAndComplexContraception, endocrinologyAndDiabetesAndMetabolism",
+      "why_contradictory": "Facility claims 9 unrelated specialties without supporting infrastructure.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claimed cardiology capability with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "We are a medical hub where we priotize your overall health...",
+      "why_contradictory": "Claims to operate 24/7 without evidence of staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties without adequate support, leading to significant contradictions."
+}
+====================================================================================================
+facility: AGI - The Gastrociti | city: Ludhiana | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='gastroenterology', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agi-the-gastrociti-ludhiana",
+  "facility_name": "AGI - The Gastrociti",
+  "city": "Ludhiana",
+  "state": "Punjab",
+  "latitude": 30.8922061920166,
+  "longitude": 75.786262512207,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, gastroenterology"
+    },
+    {
+      "capability": "gastroenterology",
+      "status": "unknown",
+      "evidence_field": "description",
+      "evidence_snippet": "top-class treatments for gastrointestinal problems with advanced equipment and techniques."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, gastroenterology",
+      "why_contradictory": "A clinic type facility cannot support family medicine as a specialty.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claiming gastroenterology without any equipment contradicts the capability.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "superior healthcare facilities",
+      "why_contradictory": "Claims of advanced facilities without supporting evidence of staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims advanced gastroenterology services but lacks necessary equipment and has specialty mismatches."
+}
+====================================================================================================
+facility: Agrawal Eye Care Centre | city: Jabalpur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agrawal-eye-care-centre-jabalpur",
+  "facility_name": "Agrawal Eye Care Centre",
+  "city": "Jabalpur",
+  "state": "Madhya Pradesh",
+  "latitude": 23.1548862457275,
+  "longitude": 79.9253692626953,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, ophthalmology, refractiveSurgeryOphthalmology, familyMedicine..."
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "confirmed",
+      "evidence_field": "equipment",
+      "evidence_snippet": "Automated perimetry device for visual field testing"
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Endophthalmitis (excluding Vitrectomy), Corneo / Scleral / Corneo scleral tear repair..."
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "One of the fastest leading Eye Clinics of Central India(Madhya Pradesh),with highly experienced eye..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine",
+      "why_contradictory": "A clinic type facility cannot support family or internal medicine specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "One of the fastest leading Eye Clinics of Central India...",
+      "why_contradictory": "Claims of advanced capabilities without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties but lacks supporting infrastructure, leading to contradictions."
+}
+====================================================================================================
+facility: Agastya Care | city: Bongaigaon | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.5.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agastya-care-bongaigaon",
+  "facility_name": "Agastya Care",
+  "city": "Bongaigaon",
+  "state": "Assam",
+  "latitude": 26.4693717956542,
+  "longitude": 90.5608367919921,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "pediatrics",
+      "status": "unknown",
+      "evidence_field": "specialties",
+      "evidence_snippet": "pediatrics, familyMedicine, cardiology, gynecologyAndObstetrics..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, internalMedicine, geriatricsInternalMedicine..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "description",
+      "evidence_snippet": "Offers obstetrics, gynecology, and women's health services..."
+    },
+    {
+      "capability": "dentistry",
+      "status": "confirmed",
+      "evidence_field": "procedure",
+      "evidence_snippet": "Dental Restoration, Discolored Tooth Restoration, Teeth Straightening..."
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "We are a medical hub where we priotize your overall health..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, cardiology, gynecologyAndObstetrics, internalMedicine, geriatricsInternalMedicine",
+      "why_contradictory": "A clinic type facility cannot support high-acuity specialties like cardiology.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "pediatrics, familyMedicine, cardiology, gynecologyAndObstetrics, internalMedicine, geriatricsInternalMedicine, dentistry, familyPlanningAndComplexContraception, endocrinologyAndDiabetesAndMetabolism",
+      "why_contradictory": "Facility claims 9 unrelated specialties without supporting infrastructure.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Claimed cardiology capability with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "We are a medical hub where we priotize your overall health...",
+      "why_contradictory": "Claims to operate 24/7 without evidence of staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims multiple specialties without adequate support, leading to significant contradictions."
+}
+====================================================================================================
+facility: Agastya Care | city: Bongaigaon | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.5.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Akaal Multispeciality Hospital | city: Rayya | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.2.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "akaal-multispeciality-hospital-rayya",
+  "facility_name": "Akaal Multispeciality Hospital",
+  "city": "Rayya",
+  "state": "Amritsar",
+  "latitude": 31.5341739654541,
+  "longitude": 75.2511749267578,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "generalSurgery, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Operates 24/7, Located in Rayya..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "surgery",
+      "why_contradictory": "Claimed surgery capability but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Operates 24/7",
+      "why_contradictory": "Claimed 24/7 operation without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims surgical capabilities but lacks necessary equipment and staff support for 24/7 operation."
+}
+====================================================================================================
+facility: Agasthiyar Siddha and Ayurveda Hospital | city: Coimbatore | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agasthiyar-siddha-and-ayurveda-hospital-coimbatore",
+  "facility_name": "Agasthiyar Siddha and Ayurveda Hospital",
+  "city": "Coimbatore",
+  "state": "Tamil Nadu",
+  "latitude": 12.5545625686645,
+  "longitude": 78.75,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "dermatology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "oncology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "dermatology, nephrology, rheumatology, cardiology, internalMedicine, medicalOncology",
+      "why_contradictory": "Claims high-acuity specialties but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Always open",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Ahsan Medico'S | city: Bongaigaon | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "ahsan-medico-s-bongaigaon",
+  "facility_name": "Ahsan Medico'S",
+  "city": "Bongaigaon",
+  "state": "Assam",
+  "latitude": 26.4892425537109,
+  "longitude": 90.5508270263671,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Open 24 Hrs"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "internalMedicine",
+      "why_contradictory": "Claimed internal medicine without any equipment to support it.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Open 24 Hrs",
+      "why_contradictory": "Claimed 24/7 operation without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims internal medicine but lacks necessary equipment and staff to support 24/7 operation."
+}
+====================================================================================================
+facility: Agasthiyar Siddha and Ayurveda Hospital | city: Coimbatore | attempt: retry
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agasthiyar-siddha-and-ayurveda-hospital-coimbatore",
+  "facility_name": "Agasthiyar Siddha and Ayurveda Hospital",
+  "city": "Coimbatore",
+  "state": "Tamil Nadu",
+  "latitude": 12.5545625686645,
+  "longitude": 78.75,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "dermatology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "oncology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "cardiology",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "Always open"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "dermatology, nephrology, rheumatology, cardiology, internalMedicine, medicalOncology",
+      "why_contradictory": "Claims high-acuity specialties but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "Always open",
+      "why_contradictory": "No supporting staff or equipment to justify 24/7 operation.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims high-acuity capabilities without supporting equipment, leading to significant contradictions."
+}
+====================================================================================================
+facility: Agasthiyar Siddha and Ayurveda Hospital | city: Coimbatore | attempt: fallback
+fallback_error:
+1 validation error for FacilityAssessment
+capability_claims.4.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+====================================================================================================
+facility: Agastya Maternity and General Hospital | city: Nighoj | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.1.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agastya-maternity-and-general-hospital-nighoj",
+  "facility_name": "Agastya Maternity and General Hospital",
+  "city": "Nighoj",
+  "state": "Maharashtra",
+  "latitude": 18.9210987091064,
+  "longitude": 74.3202819824218,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "obstetricsAndMaternityCare, gynecologyAndObstetrics, internalMedicine"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "capability",
+      "evidence_snippet": "Operates 24/7, Provides maternity services..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "obstetrics",
+      "why_contradictory": "Claimed obstetrics services but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "obstetrics",
+      "why_contradictory": "Claimed obstetrics services but has no doctors listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "capability",
+      "claim": "Operates 24/7",
+      "why_contradictory": "Claimed 24/7 operation without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims obstetrics services but lacks necessary equipment and staff, raising significant concerns."
+}
+====================================================================================================
+facility: Agarwal Urology & Eye Care Centre | city: Bikaner | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.0.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='urology', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "agarwal-urology-eye-care-centre-bikaner",
+  "facility_name": "Agarwal Urology & Eye Care Centre",
+  "city": "Bikaner",
+  "state": "Rajasthan",
+  "latitude": 28.0056686401367,
+  "longitude": 73.3263702392578,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "urology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, urology, ophthalmology"
+    },
+    {
+      "capability": "ophthalmology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, urology, ophthalmology"
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "urology, ophthalmology services",
+      "why_contradictory": "No equipment listed to support high-acuity urology and eye care services.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "hospital providing urology and eye care services",
+      "why_contradictory": "Claiming hospital services with no listed doctors.",
+      "severity": 4
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims urology and ophthalmology services but lacks necessary equipment and staff."
+}

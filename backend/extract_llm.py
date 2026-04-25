@@ -5,6 +5,7 @@ import asyncio
 import json
 import os
 import re
+import time
 from pathlib import Path
 from typing import Any
 
@@ -42,8 +43,15 @@ MODEL = "gpt-4o-mini"
 INPUT_COST_PER_1M = 0.15
 OUTPUT_COST_PER_1M = 0.60
 PRIORITY_ROWS_PATH = Path("data/priority_rows.parquet")
+FULL_ROWS_PATH = Path("data/facilities_clean.parquet")
+ASSESSMENTS_OUTPUT_PATH = Path("backend/data/assessments_llm.parquet")
 FAILURE_LOG_PATH = Path("backend/data/extraction_failures.log")
 RANDOM_STATE = 42
+FULL_CONCURRENCY = 10
+CHECKPOINT_EVERY = 100
+COST_LIMIT_USD = 10.00
+FALLBACK_WINDOW_SIZE = 500
+FALLBACK_WINDOW_LIMIT = 0.05
 
 SCHEMA_RULE_BLOCK = """CRITICAL JSON SCHEMA RULES:
 - capability_claims is a JSON array. Each element is an object with EXACTLY these keys: "capability", "status", "evidence_field", "evidence_snippet". No other keys.
@@ -221,6 +229,17 @@ def log_validation_failure(row: pd.Series, attempt: str, error: Exception, raw_o
         handle.write("\n")
 
 
+def log_fallback(row: pd.Series, error: Exception | str) -> None:
+    FAILURE_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    name = scalar_or_null(row.get("name"))
+    city = scalar_or_null(row.get("address_city"))
+    with FAILURE_LOG_PATH.open("a", encoding="utf-8") as handle:
+        handle.write("=" * 100 + "\n")
+        handle.write(f"facility: {name} | city: {city} | attempt: fallback\n")
+        handle.write("fallback_error:\n")
+        handle.write(f"{error}\n")
+
+
 def build_user_prompt(row: pd.Series) -> str:
     name = scalar_or_null(row.get("name"))
     city = scalar_or_null(row.get("address_city"))
@@ -265,6 +284,7 @@ def fallback_assessment(row: pd.Series, error: Exception | str) -> FacilityAsses
     name = scalar_or_null(row.get("name"))
     city = scalar_or_null(row.get("address_city"))
     print(f"Extraction failed for {name}: {error}")
+    log_fallback(row, error)
     return FacilityAssessment(
         facility_id=make_facility_id("" if name == "null" else name, "" if city == "null" else city),
         facility_name="" if name == "null" else name,
@@ -473,6 +493,146 @@ def print_named_assessment(assessments: list[FacilityAssessment], name_fragment:
     print(f"\nWARNING: assessment not found for {name_fragment}")
 
 
+def assessment_to_record(assessment: FacilityAssessment, usage: dict[str, Any]) -> dict[str, Any]:
+    dumped = assessment.model_dump(mode="json")
+    has_fallback = any(claim.get("evidence_field") == "extraction_failed" for claim in dumped["capability_claims"])
+    return {
+        "facility_id": dumped["facility_id"],
+        "facility_name": dumped["facility_name"],
+        "city": dumped["city"],
+        "state": dumped["state"],
+        "latitude": dumped["latitude"],
+        "longitude": dumped["longitude"],
+        "facility_type": dumped["facility_type"],
+        "capability_claims": json.dumps(dumped["capability_claims"], ensure_ascii=False),
+        "contradictions": json.dumps(dumped["contradictions"], ensure_ascii=False),
+        "trust_subscores": json.dumps(dumped["trust_subscores"], ensure_ascii=False),
+        "overall_trust_score": dumped["overall_trust_score"],
+        "confidence_interval": json.dumps(dumped["confidence_interval"]),
+        "reasoning_summary": dumped["reasoning_summary"],
+        "prompt_tokens": int(usage.get("prompt_tokens", 0)),
+        "completion_tokens": int(usage.get("completion_tokens", 0)),
+        "validation_retries": int(usage.get("validation_retries", 0)),
+        "has_fallback": bool(has_fallback),
+    }
+
+
+def atomic_write_parquet(records: list[dict[str, Any]], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(".tmp.parquet")
+    pd.DataFrame(records).to_parquet(tmp_path, index=False)
+    tmp_path.replace(path)
+
+
+def load_existing_assessments(path: Path) -> tuple[list[dict[str, Any]], set[str]]:
+    if not path.exists():
+        return [], set()
+    existing = pd.read_parquet(path)
+    records = existing.to_dict(orient="records")
+    processed_ids = set(existing["facility_id"].astype(str)) if "facility_id" in existing.columns else set()
+    return records, processed_ids
+
+
+def demo_order_for_row(row: pd.Series) -> int:
+    name = str(row.get("name", "")).casefold()
+    city = str(row.get("address_city", "")).casefold()
+    for index, (name_fragment, demo_city) in enumerate(DEMO_FACILITIES):
+        if name_fragment.casefold() in name and city == demo_city.casefold():
+            return index
+    return len(DEMO_FACILITIES)
+
+
+def prepare_full_rows(df: pd.DataFrame) -> pd.DataFrame:
+    prepared = df.reset_index(drop=True).copy()
+    prepared["facility_id"] = prepared.apply(
+        lambda row: make_facility_id(text_for_id(row.get("name")), text_for_id(row.get("address_city"))),
+        axis=1,
+    )
+    prepared["_demo_order"] = prepared.apply(demo_order_for_row, axis=1)
+    prepared["_original_order"] = range(len(prepared))
+    return prepared.sort_values(["_demo_order", "_original_order"]).drop(
+        columns=["_demo_order", "_original_order"]
+    )
+
+
+def text_for_id(value: Any) -> str:
+    return "" if is_null(value) else str(value)
+
+
+def cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    return (prompt_tokens / 1_000_000 * INPUT_COST_PER_1M) + (
+        completion_tokens / 1_000_000 * OUTPUT_COST_PER_1M
+    )
+
+
+def format_seconds(seconds: float) -> str:
+    if seconds == float("inf"):
+        return "unknown"
+    seconds = max(0, int(seconds))
+    hours, remainder = divmod(seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours:
+        return f"{hours}h {minutes}m {secs}s"
+    if minutes:
+        return f"{minutes}m {secs}s"
+    return f"{secs}s"
+
+
+def prompt_to_continue(reason: str) -> bool:
+    print(f"\nPAUSED: {reason}")
+    try:
+        answer = input("Continue? Type 'yes' to continue: ").strip().casefold()
+    except EOFError:
+        print("No interactive input available; stopping after saved checkpoint.")
+        return False
+    return answer == "yes"
+
+
+def contradiction_distribution(records: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for record in records:
+        try:
+            contradictions = json.loads(record.get("contradictions") or "[]")
+        except json.JSONDecodeError:
+            continue
+        for item in contradictions:
+            contradiction_type = item.get("contradiction_type", "unknown")
+            counts[contradiction_type] = counts.get(contradiction_type, 0) + 1
+    return dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
+
+
+def print_full_summary(
+    records: list[dict[str, Any]],
+    prompt_tokens: int,
+    completion_tokens: int,
+    started_at: float,
+    total_rows: int,
+) -> None:
+    fallback_count = sum(1 for record in records if bool(record.get("has_fallback")))
+    processed = len(records)
+    fallback_pct = (fallback_count / processed * 100) if processed else 0
+    print("\nFull extraction summary:")
+    print(f"  Total rows processed: {processed:,} / {total_rows:,}")
+    print(f"  Fallback count: {fallback_count:,} ({fallback_pct:.2f}%)")
+    print(f"  Total cost this run: ${cost_usd(prompt_tokens, completion_tokens):.4f}")
+    print(f"  Wall time: {format_seconds(time.perf_counter() - started_at)}")
+    print("  Contradiction type distribution:")
+    for contradiction_type, count in contradiction_distribution(records).items():
+        print(f"    {contradiction_type}: {count:,}")
+    print("  Demo facilities in output parquet:")
+    for name_fragment, city in DEMO_FACILITIES:
+        matches = [
+            record
+            for record in records
+            if name_fragment.casefold() in record["facility_name"].casefold()
+            and record["city"].casefold() == city.casefold()
+        ]
+        present_id = matches[0]["facility_id"] if matches else make_facility_id(name_fragment, city)
+        present = bool(matches)
+        status = "present" if present else "MISSING"
+        print(f"    {present_id}: {status}")
+
+
 def count_prompt_tokens_for_visibility(row: pd.Series) -> int:
     try:
         encoding = tiktoken.encoding_for_model(MODEL)
@@ -538,15 +698,121 @@ async def run_test() -> None:
     print(f"\nTotal estimated cost for test: ${total_cost:.6f}")
 
 
+async def run_full() -> None:
+    load_dotenv()
+    started_at = time.perf_counter()
+    df = prepare_full_rows(pd.read_parquet(FULL_ROWS_PATH))
+    total_rows = len(df)
+    records, processed_ids = load_existing_assessments(ASSESSMENTS_OUTPUT_PATH)
+    skipped = int(df["facility_id"].isin(processed_ids).sum())
+    todo = df[~df["facility_id"].isin(processed_ids)].reset_index(drop=True)
+
+    print(f"Loaded {total_rows:,} rows from {FULL_ROWS_PATH.as_posix()}.")
+    print(f"Existing assessments loaded: {len(records):,}")
+    print(f"Rows skipped by facility_id: {skipped:,}")
+    print(f"Rows remaining this run: {len(todo):,}")
+    print("Demo facilities are sorted first in the pending queue.")
+
+    if todo.empty:
+        print_full_summary(records, 0, 0, started_at, total_rows)
+        return
+
+    semaphore = asyncio.Semaphore(FULL_CONCURRENCY)
+    run_prompt_tokens = 0
+    run_completion_tokens = 0
+    run_processed = 0
+    run_fallbacks = 0
+    window_processed = 0
+    window_fallbacks = 0
+    reached_500_checkpoint = False
+
+    async with httpx.AsyncClient() as client:
+        for start in range(0, len(todo), CHECKPOINT_EVERY):
+            chunk = todo.iloc[start : start + CHECKPOINT_EVERY]
+            tasks = [extract_one(client, row, semaphore) for _, row in chunk.iterrows()]
+            results = await tqdm_asyncio.gather(
+                *tasks,
+                desc=f"Extracting rows {start + 1}-{start + len(chunk)}",
+            )
+
+            for assessment, usage in results:
+                FacilityAssessment.model_validate(assessment.model_dump())
+                record = assessment_to_record(assessment, usage)
+                records.append(record)
+                run_prompt_tokens += int(usage.get("prompt_tokens", 0))
+                run_completion_tokens += int(usage.get("completion_tokens", 0))
+                run_processed += 1
+                window_processed += 1
+                if record["has_fallback"]:
+                    run_fallbacks += 1
+                    window_fallbacks += 1
+
+            atomic_write_parquet(records, ASSESSMENTS_OUTPUT_PATH)
+
+            rows_done = len(records)
+            rows_remaining = max(0, total_rows - rows_done)
+            fallback_pct = (run_fallbacks / run_processed * 100) if run_processed else 0
+            current_cost = cost_usd(run_prompt_tokens, run_completion_tokens)
+            elapsed = time.perf_counter() - started_at
+            speed = run_processed / elapsed if elapsed > 0 else 0
+            eta = rows_remaining / speed if speed else float("inf")
+            projected_total_cost = (current_cost / run_processed * total_rows) if run_processed else 0
+
+            print("\nProgress checkpoint:")
+            print(f"  Rows done: {rows_done:,}")
+            print(f"  Rows remaining: {rows_remaining:,}")
+            print(f"  Fallback count this run: {run_fallbacks:,}")
+            print(f"  Fallback rate this run: {fallback_pct:.2f}%")
+            print(f"  Running cost this run: ${current_cost:.4f}")
+            print(f"  Projected total cost for 10,000 rows at current average: ${projected_total_cost:.4f}")
+            print(f"  Estimated time remaining: {format_seconds(eta)}")
+            print(f"  Saved checkpoint: {ASSESSMENTS_OUTPUT_PATH.as_posix()}")
+
+            if current_cost > COST_LIMIT_USD:
+                if not prompt_to_continue(f"running cost ${current_cost:.2f} exceeds ${COST_LIMIT_USD:.2f}"):
+                    print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+                    return
+
+            if window_processed >= FALLBACK_WINDOW_SIZE:
+                window_rate = window_fallbacks / window_processed
+                print(
+                    f"  Last {window_processed:,}-row fallback window: "
+                    f"{window_fallbacks:,} ({window_rate * 100:.2f}%)"
+                )
+                should_pause_for_quality = window_rate > FALLBACK_WINDOW_LIMIT
+                window_processed = 0
+                window_fallbacks = 0
+                if should_pause_for_quality:
+                    if not prompt_to_continue(
+                        f"fallback rate exceeded {FALLBACK_WINDOW_LIMIT * 100:.1f}% in the last 500 rows"
+                    ):
+                        print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+                        return
+
+            if run_processed >= 500 and not reached_500_checkpoint:
+                reached_500_checkpoint = True
+                if not prompt_to_continue("500-row checkpoint reached for cost/fallback review"):
+                    print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+                    return
+
+    print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run OpenAI LLM extraction for TrustMap facilities.")
     parser.add_argument("--test", action="store_true", help="Run the 20-row extraction quality test.")
+    parser.add_argument("--full", action="store_true", help="Run resumable LLM extraction for all 10,000 rows.")
     args = parser.parse_args()
 
-    if not args.test:
-        raise SystemExit("Only --test mode is implemented right now.")
+    if args.test and args.full:
+        raise SystemExit("Choose only one mode: --test or --full.")
+    if not args.test and not args.full:
+        raise SystemExit("Choose a mode: --test or --full.")
 
-    asyncio.run(run_test())
+    if args.test:
+        asyncio.run(run_test())
+    else:
+        asyncio.run(run_full())
 
 
 if __name__ == "__main__":
