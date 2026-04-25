@@ -1,0 +1,450 @@
+{
+  "type_specialty_mismatch": [
+    {
+      "name": "1000 Smiles Dental Clinic",
+      "city": "Hyderabad",
+      "type": "clinic",
+      "specialties": [
+        "familyMedicine",
+        "periodontics",
+        "endodontics",
+        "dentistry",
+        "aestheticDentistry"
+      ],
+      "equipment": [],
+      "capability": [
+        "Has been in operation for 10 years",
+        "Dental clinic"
+      ],
+      "note": "Dentist/clinic claims broad medical specialties such as family medicine, internal medicine, or cardiology."
+    },
+    {
+      "name": "108 Eye And Heath Centre",
+      "city": "Noida",
+      "type": "clinic",
+      "specialties": [
+        "pediatricsAndStrabismusOphthalmology",
+        "ophthalmology",
+        "refractiveSurgeryOphthalmology",
+        "familyMedicine",
+        "eyeTraumaAndEmergencyEyeCare",
+        "cataractAndAnteriorSegmentSurgery",
+        "uveitisOphthalmology",
+        "retinaAndVitreoretinalOphthalmology",
+        "glaucomaOphthalmology",
+        "neuroOphthalmology"
+      ],
+      "equipment": [],
+      "capability": [
+        "Neuro Ophthalmology services offered",
+        "Outpatient ophthalmology clinic",
+        "Has 1 ophthalmologist/eye surgeon on staff",
+        "Dr. B K Varma is an ophthalmologist/eye surgeon with 17 years of experience",
+        "Retina Treatment Services offered",
+        "Paediatric Ophthalmology services offered",
+        "Employs experienced ophthalmologists",
+        "Uses latest equipment and world-standard technologies in eye care",
+        "Provides comprehensive eye care services under one roof"
+      ],
+      "note": "Dentist/clinic claims broad medical specialties such as family medicine, internal medicine, or cardiology."
+    },
+    {
+      "name": "24x7 Family Clinix",
+      "city": "Ghaziabad",
+      "type": "clinic",
+      "specialties": [
+        "familyMedicine"
+      ],
+      "equipment": [],
+      "capability": [],
+      "note": "Dentist/clinic claims broad medical specialties such as family medicine, internal medicine, or cardiology."
+    }
+  ],
+  "specialty_sprawl": [
+    {
+      "name": "City Health Clinic & Diagnostic",
+      "city": "Guwahati",
+      "type": "clinic",
+      "specialties": [
+        "urology",
+        "nephrology",
+        "otolaryngology",
+        "gastroenterology",
+        "internalMedicine",
+        "psychiatry",
+        "endocrinologyAndDiabetesAndMetabolism",
+        "pediatrics",
+        "surgicalOncology",
+        "reproductiveEndocrinologyAndInfertility",
+        "dermatology",
+        "gynecologyAndObstetrics",
+        "diagnosticRadiology",
+        "neurosurgery",
+        "plasticSurgery",
+        "neurology",
+        "cardiology",
+        "headAndNeckSurgeryOtolaryngology",
+        "medicalOncology",
+        "radiology",
+        "ophthalmology",
+        "familyMedicine",
+        "pulmonology",
+        "orthopedicSurgery",
+        "generalSurgery",
+        "dentistry"
+      ],
+      "equipment": [
+        "Echocardiography (Echo) system",
+        "On-site well-equipped pharmacy",
+        "Ultrasound machine",
+        "On-site echocardiography (Echo) equipment",
+        "Treadmill Test (TMT) equipment",
+        "Electrocardiography (ECG) machine",
+        "On-site electrocardiography (ECG) equipment",
+        "X-ray machine",
+        "On-site imaging equipment including X-ray and Ultrasound (USG)",
+        "Wheel chair accessible entrance and exit",
+        "On-site treadmill testing (TMT) equipment"
+      ],
+      "capability": [
+        "Has over 50 doctors on staff",
+        "Offers home blood collection services",
+        "Delivers radiology and diagnostic services including X-Ray, Ultrasound, Echo, ECG, and TMT",
+        "Has ICU and on-site operating theatre facilities",
+        "Departments include Cardiology, Dermatology, Endocrine & Diabetes, ENT, General Surgery, Head & Neck Surgery, Hepatology, Medicine, Neurology, Neurosurgery, Obstetrics & Gynecology, Oncology, Orthopedics, Pediatrics, Psychiatry, Pulmonology, and Urology",
+        "Offers preventive health check-up packages including corporate health checkups",
+        "On-site pharmacy",
+        "Is a multispecialty clinic and diagnostic center",
+        "Provides preventive health check-up packages",
+        "Multi-speciality hospital"
+      ],
+      "note": "Facility lists five or more specialties spanning several unrelated clinical families."
+    },
+    {
+      "name": "Aayushman Hospitals",
+      "city": "Ranchi",
+      "type": "hospital",
+      "specialties": [
+        "vascularSurgery",
+        "urology",
+        "nephrology",
+        "otolaryngology",
+        "internalMedicine",
+        "psychiatry",
+        "pediatrics",
+        "criticalCareMedicine",
+        "dermatology",
+        "gynecologyAndObstetrics",
+        "plasticSurgery",
+        "neurology",
+        "cardiology",
+        "emergencyMedicine",
+        "medicalOncology",
+        "ophthalmology",
+        "radiology",
+        "orthopedicSurgery",
+        "physicalMedicineAndRehabilitation",
+        "generalSurgery",
+        "pathology",
+        "neuropsychiatry",
+        "dentistry"
+      ],
+      "equipment": [
+        "CT scanner",
+        "Operating theatres with modern surgical technology",
+        "On-site diagnostic laboratory facilities",
+        "Breast ultrasound equipment",
+        "Ultrasound machine",
+        "X-ray machine",
+        "Sonomammography equipment",
+        "MRI scanner",
+        "Lung function testing equipment (spirometry)"
+      ],
+      "capability": [
+        "Open 24 Hrs",
+        "Obstetric services program",
+        "Has 21 Years in Healthcare",
+        "Located in Ranchi",
+        "Private hospital (Justdial listing)",
+        "Rehabilitation services including physiotherapy, occupational therapy, and speech therapy",
+        "Specialized clinics for cardiology, neurology, orthopedics, oncology",
+        "24/7 emergency department",
+        "CT services",
+        "Staff on record: Dr. Prashant Jayswal – Senior Consultant General & Laparoscopic Surgeon",
+        "Inpatient (IPD) and outpatient (OPD) services available",
+        "Ophthalmology",
+        "Orthopedics",
+        "Pediatrics",
+        "Has 21 years in healthcare",
+        "MRI services",
+        "ENT (Ear, Nose, Throat)",
+        "Dermatology",
+        "Gynaecology",
+        "On-site laboratory services",
+        "On-site pharmacy",
+        "Staff on record: Dr. Alka Jayswal – MD, DGO, Gynecologist & Obstetrician",
+        "Wellness programs",
+        "X-ray imaging services",
+        "Emergency department available",
+        "General Surgery",
+        "Maternity and Child Care services with a modern maternity ward",
+        "Has 21 years in operation",
+        "Located in Ranchi (Kanke Boreya)",
+        "Medicine"
+      ],
+      "note": "Facility lists five or more specialties spanning several unrelated clinical families."
+    },
+    {
+      "name": "Doon Hospital Plus",
+      "city": "Faridabad",
+      "type": "hospital",
+      "specialties": [
+        "urology",
+        "nephrology",
+        "vascularSurgery",
+        "gastroenterology",
+        "otolaryngology",
+        "internalMedicine",
+        "psychiatry",
+        "endocrinologyAndDiabetesAndMetabolism",
+        "pediatrics",
+        "dermatology",
+        "neurosurgery",
+        "neurology",
+        "neonatologyPerinatalMedicine",
+        "cardiology",
+        "medicalOncology",
+        "ophthalmology",
+        "radiology",
+        "pulmonology",
+        "orthopedicSurgery",
+        "gynecology",
+        "dentistry"
+      ],
+      "equipment": [],
+      "capability": [
+        "Offers Psychiatry services.",
+        "Offers Nephrology services.",
+        "Is a 40-bed multispeciality hospital.",
+        "Offers Ophthalmology services.",
+        "Offers Dermatology services.",
+        "Offers Cardiology services.",
+        "Offers Urology services.",
+        "Offers Radiology services.",
+        "Offers Neonatology services.",
+        "Offers Neurology services.",
+        "Offers Gynecology services.",
+        "Offers Neurosurgery services.",
+        "Offers Dentistry services.",
+        "Offers Vascular Surgery services.",
+        "Offers Oncology services.",
+        "Offers Gastroenterology services.",
+        "Offers Orthopaedic services.",
+        "Offers Pediatrics services.",
+        "Centers of Clinical Excellence include Cardiology, Neurology, Gastroenterology, Orthopaedic, Oncology, Gynecology, Dermatology, Ophthalmology, Pediatrics, Endocrinology, Urology, Nephrology, Pulmonology, Neurosurgery, Radiology, Neonatology, Vascular Surgery, Psychiatry, Dentistry, ENT.",
+        "Offers ENT (Ear, Nose, Throat) services.",
+        "Offers Pulmonology services.",
+        "Offers Endocrinology services."
+      ],
+      "note": "Facility lists five or more specialties spanning several unrelated clinical families."
+    }
+  ],
+  "serious_description_no_equipment": [
+    {
+      "name": "Aadhaar Hospital",
+      "city": "Tirupur",
+      "type": "hospital",
+      "specialties": [
+        "radiology",
+        "familyMedicine",
+        "anesthesiology",
+        "cardiology",
+        "internalMedicine",
+        "generalSurgery",
+        "emergencyMedicine",
+        "dentistry"
+      ],
+      "equipment": [],
+      "capability": [
+        "CIN: U85110TN2018PTC122540",
+        "Sub Category: Non-Government",
+        "Paid-up Capital: INR 500,000.00",
+        "Company Status: Active",
+        "Registered state: Tamil Nadu",
+        "Incorporation date: 07-05-2018",
+        "Registrar of Companies: RoC - Chennai",
+        "Company Class: Private",
+        "Category: Company Limited by Shares",
+        "Authorized Capital: INR 5,000,000.00"
+      ],
+      "note": "Description mentions ICU, emergency, or surgery, but no equipment is listed."
+    },
+    {
+      "name": "Aarogyam Emergency Hospital",
+      "city": "Varanasi",
+      "type": "hospital",
+      "specialties": [
+        "emergencyMedicine",
+        "internalMedicine"
+      ],
+      "equipment": [],
+      "capability": [
+        "Operates 24/7 emergency care",
+        "Has on-site blood bank"
+      ],
+      "note": "Description mentions ICU, emergency, or surgery, but no equipment is listed."
+    },
+    {
+      "name": "Aashirwad Emergency Hospital,Thaldka -Nohar",
+      "city": "Nohar",
+      "type": "hospital",
+      "specialties": [
+        "internalMedicine"
+      ],
+      "equipment": [],
+      "capability": [],
+      "note": "Description mentions ICU, emergency, or surgery, but no equipment is listed."
+    }
+  ],
+  "low_social_no_brand_or_site": [
+    {
+      "name": "1000 Smiles Dental Clinic",
+      "city": "Hyderabad",
+      "type": "clinic",
+      "specialties": [
+        "familyMedicine",
+        "periodontics",
+        "endodontics",
+        "dentistry",
+        "aestheticDentistry"
+      ],
+      "equipment": [],
+      "capability": [
+        "Has been in operation for 10 years",
+        "Dental clinic"
+      ],
+      "note": "Low follower count, no custom logo signal, and no owned website make the facility hard to verify."
+    },
+    {
+      "name": "Aaisha Medical Center",
+      "city": "Madangir",
+      "type": "hospital",
+      "specialties": [
+        "internalMedicine"
+      ],
+      "equipment": [],
+      "capability": [
+        "Aaisha Medical Center provides general physician services",
+        "24/7 availability",
+        "Hospital"
+      ],
+      "note": "Low follower count, no custom logo signal, and no owned website make the facility hard to verify."
+    },
+    {
+      "name": "Aarogyam Emergency Hospital",
+      "city": "Varanasi",
+      "type": "hospital",
+      "specialties": [
+        "emergencyMedicine",
+        "internalMedicine"
+      ],
+      "equipment": [],
+      "capability": [
+        "Operates 24/7 emergency care",
+        "Has on-site blood bank"
+      ],
+      "note": "Low follower count, no custom logo signal, and no owned website make the facility hard to verify."
+    }
+  ],
+  "big_capability_tiny_staff": [
+    {
+      "name": "32 Dental Focus",
+      "city": "Tiruppur",
+      "type": "dentist",
+      "specialties": [
+        "dentistry",
+        "periodontics"
+      ],
+      "equipment": [],
+      "capability": [
+        "Specializes in periodontics",
+        "Uses advanced evidence-based technologies",
+        "Offers complete dental treatment under one roof",
+        "Maintains a specialized dental team of doctors",
+        "Provides painless dental treatment",
+        "In its 6th year of operation"
+      ],
+      "note": "Capability claims 24/7 or advanced services, but doctor count is missing or only one."
+    },
+    {
+      "name": "4 Senses Clinic",
+      "city": "Bengaluru",
+      "type": "clinic",
+      "specialties": [
+        "familyMedicine",
+        "otolaryngology",
+        "dermatology"
+      ],
+      "equipment": [],
+      "capability": [
+        "Offers advanced skin, hair and ENT care",
+        "Located in Bangalore, Karnataka, India",
+        "Has a website at foursenses.in"
+      ],
+      "note": "Capability claims 24/7 or advanced services, but doctor count is missing or only one."
+    },
+    {
+      "name": "4th Generation Homoeopathy Clinic",
+      "city": "Amroha",
+      "type": "clinic",
+      "specialties": [
+        "pediatrics",
+        "reproductiveEndocrinologyAndInfertility",
+        "neurology",
+        "preventiveMedicine",
+        "andrologyAndMaleFertility",
+        "dermatology",
+        "hairAndNailDisorders",
+        "pulmonology",
+        "urology",
+        "familyMedicine",
+        "gastroenterology",
+        "gynecologyAndObstetrics",
+        "internalMedicine",
+        "chronicDiseasePreventionAndLifestyleMedicine",
+        "psychiatry",
+        "headacheMedicine",
+        "endocrinologyAndDiabetesAndMetabolism"
+      ],
+      "equipment": [],
+      "capability": [
+        "Offers alternative and holistic health services",
+        "Modern infrastructure with state-of-the-art facilities.",
+        "Provides homeopathy treatment for psychological conditions",
+        "Located in Amroha, Uttar Pradesh (Pincode 244221).",
+        "Provides homeopathy treatment for respiratory disorders",
+        "Provides routine check-ups and preventive care.",
+        "Accepts debit/credit cards, Paytm, Google Pay, EMI, and other payment methods",
+        "Operates as a homeopathy clinic",
+        "Provides homeopathy treatment for stomach disorders",
+        "Team of experienced doctors.",
+        "Holistic approach to healthcare.",
+        "Online appointment scheduling available.",
+        "Provides homeopathy treatment for gastric ailments",
+        "Provides homeopathy treatment for skin disorders",
+        "Affordable and transparent services.",
+        "Accepts cash as payment mode",
+        "Specialized treatments include Hair Fall, Skin, Psoriasis, Eczema, Vitiligo, PCOS, Thyroid, Migraine, Sexual Health, Erectile Dysfunction, and Premature Ejaculation",
+        "Provides homeopathy treatment for infertility",
+        "Provides homeopathy treatment for hair fall",
+        "Offers advanced diagnostic procedures and treatment plans.",
+        "Homeopathy clinic offering homeopathy treatment services",
+        "Operates as a homeopathic clinic",
+        "Association Type: Non-Network.",
+        "Provides homeopathy treatment for chronic diseases",
+        "Outpatient services including general consultations, chronic disease management, vaccinations, and health screenings."
+      ],
+      "note": "Capability claims 24/7 or advanced services, but doctor count is missing or only one."
+    }
+  ]
+}
