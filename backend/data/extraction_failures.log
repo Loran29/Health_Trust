@@ -1,0 +1,250 @@
+====================================================================================================
+facility: 7 Star Healthcare (Hospital) | city: Delhi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "7-star-healthcare-hospital-delhi",
+  "facility_name": "7 Star Healthcare (Hospital)",
+  "city": "Delhi",
+  "state": "Delhi",
+  "latitude": 28.5528373718261,
+  "longitude": 77.2993621826171,
+  "facility_type": "hospital",
+  "capability_claims": [
+    {
+      "capability": "obstetrics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "reproductiveEndocrinologyAndInfertility, radiology, cardiacSurgery..."
+    },
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "internalMedicine, pathology"
+    },
+    {
+      "capability": "surgery",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "cardiacSurgery, internalMedicine, pathology"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "24x7 ultrasound imaging services, Motto: No compromise on quality..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "24x7 ultrasound imaging services",
+      "why_contradictory": "No supporting staff or equipment for high-acuity capabilities.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims diverse capabilities but lacks supporting evidence for high-acuity services."
+}
+====================================================================================================
+facility: Indal Advance Lifecare Center | city: Varanasi | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.3.capability
+  Input should be 'emergency', 'icu', 'surgery', 'obstetrics', 'dialysis', 'oncology', 'cardiology', 'anesthesia', 'pediatrics', 'mental_health', 'dentistry', 'primary_care', 'ophthalmology', 'orthopedics', 'dermatology' or 'runs_24_7' [type=enum, input_value='unknown', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "indal-advance-lifecare-center-varanasi",
+  "facility_name": "Indal Advance Lifecare Center",
+  "city": "Varanasi",
+  "state": "Uttar Pradesh",
+  "latitude": 25.2533569335937,
+  "longitude": 82.9725799560546,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "familyMedicine, internalMedicine, endocrinologyAndDiabetesAndMetabolism"
+    },
+    {
+      "capability": "orthopedics",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "orthopedicSurgery, physicalMedicineAndRehabilitation"
+    },
+    {
+      "capability": "cardiology",
+      "status": "inferred",
+      "evidence_field": "specialties",
+      "evidence_snippet": "cardiology, cardiac (heart) care is provided."
+    },
+    {
+      "capability": "unknown",
+      "status": "unknown",
+      "evidence_field": "equipment",
+      "evidence_snippet": ""
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "cardiology, orthopedicSurgery",
+      "why_contradictory": "High-acuity capabilities claimed with no supporting equipment.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "familyMedicine, internalMedicine, orthopedicSurgery",
+      "why_contradictory": "Clinic type claiming specialties more suited for hospitals or larger facilities.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "radiology, nephrology, pulmonology, cardiology, gastroenterology, familyMedicine, internalMedicine, orthopedicSurgery, geriatricsInternalMedicine, physicalMedicineAndRehabilitation, pathology, endocrinologyAndDiabetesAndMetabolism",
+      "why_contradictory": "Claims 12 unrelated specialties without supporting infrastructure.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "best center for medical service offering diagnostic, pharmacy, daycare, therapeutic...",
+      "why_contradictory": "Claims advanced services without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims extensive capabilities but lacks necessary equipment and has mismatched specialties."
+}
+====================================================================================================
+facility: Krishna Homeopathy Research Hospital | city: Jaipur | attempt: first
+validation_error:
+1 validation error for FacilityAssessment
+capability_claims.6.status
+  Input should be 'confirmed', 'inferred', 'contradicted' or 'unknown' [type=enum, input_value='capability_overreach', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/enum
+raw_model_output:
+{
+  "facility_id": "krishna-homeopathy-research-hospital-jaipur",
+  "facility_name": "Krishna Homeopathy Research Hospital",
+  "city": "Jaipur",
+  "state": "Rajasthan",
+  "latitude": 26.9021587371826,
+  "longitude": 75.7379760742187,
+  "facility_type": "clinic",
+  "capability_claims": [
+    {
+      "capability": "primary_care",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "urology, nephrology, gastroenterology, internalMedicine, psychiatry, endocrinologyAndDiabetesAndMetabolism..."
+    },
+    {
+      "capability": "mental_health",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "psychiatry, endocrinologyAndDiabetesAndMetabolism, pediatrics, reproductiveEndocrinologyAndInfertility..."
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "plasticSurgery, orthopedicSurgery, cardiology, medicalOncology, andrologyAndMaleFertility..."
+    },
+    {
+      "capability": "obstetrics",
+      "status": "contradicted",
+      "evidence_field": "specialties",
+      "evidence_snippet": "gynecologyAndObstetrics, reproductiveEndocrinologyAndInfertility..."
+    },
+    {
+      "capability": "icu",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "surgery",
+      "status": "contradicted",
+      "evidence_field": "equipment",
+      "evidence_snippet": "(none)"
+    },
+    {
+      "capability": "runs_24_7",
+      "status": "capability_overreach",
+      "evidence_field": "description",
+      "evidence_snippet": "By combining excellent care with a state-of-the-art facility we strive to provide you with quality health care..."
+    }
+  ],
+  "contradictions": [
+    {
+      "contradiction_type": "type_specialty_mismatch",
+      "field_name": "specialties",
+      "claim": "urology, nephrology, gastroenterology, internalMedicine, psychiatry, endocrinologyAndDiabetesAndMetabolism...",
+      "why_contradictory": "Facility type is a clinic, which cannot support high-acuity specialties.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "specialty_sprawl",
+      "field_name": "specialties",
+      "claim": "urology, nephrology, gastroenterology, internalMedicine, psychiatry, endocrinologyAndDiabetesAndMetabolism...",
+      "why_contradictory": "Facility claims too many unrelated specialties without supporting infrastructure.",
+      "severity": 5
+    },
+    {
+      "contradiction_type": "missing_equipment",
+      "field_name": "equipment",
+      "claim": "(none)",
+      "why_contradictory": "Facility claims high-acuity capabilities but has no equipment listed.",
+      "severity": 4
+    },
+    {
+      "contradiction_type": "missing_staff",
+      "field_name": "numberDoctors",
+      "claim": "1",
+      "why_contradictory": "Facility claims advanced capabilities with only 1 doctor on staff.",
+      "severity": 3
+    },
+    {
+      "contradiction_type": "capability_overreach",
+      "field_name": "description",
+      "claim": "state-of-the-art facility",
+      "why_contradictory": "Facility claims to operate 24/7 without supporting staff or equipment.",
+      "severity": 3
+    }
+  ],
+  "trust_subscores": {
+    "internal_consistency": 50,
+    "capability_plausibility": 50,
+    "activity_signal": 50,
+    "completeness": 50
+  },
+  "overall_trust_score": 50,
+  "confidence_interval": [40, 60],
+  "reasoning_summary": "Facility claims extensive capabilities but lacks necessary equipment and staff, leading to multiple contradictions."
+}

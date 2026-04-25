@@ -42,7 +42,30 @@ MODEL = "gpt-4o-mini"
 INPUT_COST_PER_1M = 0.15
 OUTPUT_COST_PER_1M = 0.60
 PRIORITY_ROWS_PATH = Path("data/priority_rows.parquet")
+FAILURE_LOG_PATH = Path("backend/data/extraction_failures.log")
 RANDOM_STATE = 42
+
+SCHEMA_RULE_BLOCK = """CRITICAL JSON SCHEMA RULES:
+- capability_claims is a JSON array. Each element is an object with EXACTLY these keys: "capability", "status", "evidence_field", "evidence_snippet". No other keys.
+- status MUST be one of exactly these strings: "confirmed", "inferred", "contradicted", "unknown". Never put a contradiction type here.
+- capability MUST be one of exactly these strings (any other value will be rejected): emergency, icu, surgery, obstetrics, dialysis, oncology, cardiology, anesthesia, pediatrics, mental_health, dentistry, primary_care, ophthalmology, orthopedics, dermatology, runs_24_7
+- contradictions is a JSON array of objects with EXACTLY these keys: "contradiction_type", "field_name", "claim", "why_contradictory", "severity".
+- contradiction_type MUST be one of: type_specialty_mismatch, specialty_sprawl, missing_equipment, missing_staff, missing_brand, capability_overreach, other
+- severity is an integer 1-5.
+- confidence_interval is a 2-element array of integers [low, high] where 0 <= low <= high <= 100.
+- trust_subscores is an object with EXACTLY these 4 integer keys: internal_consistency, capability_plausibility, activity_signal, completeness — each 0-100.
+
+EVIDENCE SNIPPET RULES:
+- evidence_snippet is the literal CONTENT from the field, not the field name or its rendering.
+- Do NOT prefix with "specialties:" or "[...]". Quote the relevant text directly.
+- Good: "familyMedicine, periodontics, dentistry"
+- Bad: "specialties: [\\"familyMedicine\\", \\"periodontics\\"]"
+- Max 200 chars.
+
+EXTRACTION RICHNESS:
+- For facilities with many listed specialties, output one capability_claim per relevant Capability enum value that is implied or contradicted. Do not collapse multiple specialties into a single primary_care claim.
+- When a specialty maps to a Capability and the facility cannot plausibly support it (no equipment, no staff, wrong facility type), prefer status "contradicted" over "inferred".
+- Aim for 3-8 capability_claims for facilities with rich specialty lists."""
 
 SYSTEM_PROMPT = """You are an expert auditor of Indian healthcare facility data. Your job is to assess each facility for what it can actually deliver versus what it claims.
 
@@ -104,7 +127,7 @@ REASONING SUMMARY — one punchy sentence under 200 chars summarizing the assess
 
 evidence_snippet MUST be 200 characters or fewer. Truncate quoted text if needed and add "..." at the end.
 
-OUTPUT — return ONLY valid JSON matching the FacilityAssessment schema. No markdown, no preamble. Required top-level keys: facility_id, facility_name, city, state, latitude, longitude, facility_type, capability_claims, contradictions, trust_subscores, overall_trust_score, confidence_interval, reasoning_summary."""
+OUTPUT — return ONLY valid JSON matching the FacilityAssessment schema. No markdown, no preamble. Required top-level keys: facility_id, facility_name, city, state, latitude, longitude, facility_type, capability_claims, contradictions, trust_subscores, overall_trust_score, confidence_interval, reasoning_summary.""" + "\n\n" + SCHEMA_RULE_BLOCK
 
 DEMO_FACILITIES = [
     ("1000 Smiles Dental Clinic", "Hyderabad"),
@@ -179,9 +202,23 @@ def bool_or_null(value: Any) -> str:
 
 def list_or_null(value: Any, empty_as_null: bool = True) -> str:
     values = to_list(value)
-    if empty_as_null and not values:
-        return "null"
-    return json.dumps(values, ensure_ascii=False)
+    if not values:
+        return "(none)"
+    return ", ".join(str(item) for item in values)
+
+
+def log_validation_failure(row: pd.Series, attempt: str, error: Exception, raw_output: str) -> None:
+    FAILURE_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    name = scalar_or_null(row.get("name"))
+    city = scalar_or_null(row.get("address_city"))
+    with FAILURE_LOG_PATH.open("a", encoding="utf-8") as handle:
+        handle.write("=" * 100 + "\n")
+        handle.write(f"facility: {name} | city: {city} | attempt: {attempt}\n")
+        handle.write("validation_error:\n")
+        handle.write(f"{error}\n")
+        handle.write("raw_model_output:\n")
+        handle.write(raw_output)
+        handle.write("\n")
 
 
 def build_user_prompt(row: pd.Series) -> str:
@@ -290,13 +327,16 @@ async def extract_one(
     client: httpx.AsyncClient,
     row: pd.Series,
     semaphore: asyncio.Semaphore,
-) -> tuple[FacilityAssessment, dict[str, int]]:
+) -> tuple[FacilityAssessment, dict[str, Any]]:
     async with semaphore:
+        facility_name = scalar_or_null(row.get("name"))
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             return fallback_assessment(row, "OPENAI_API_KEY is missing"), {
                 "prompt_tokens": 0,
                 "completion_tokens": 0,
+                "validation_retries": 0,
+                "facility_name": facility_name,
             }
 
         user_prompt = build_user_prompt(row)
@@ -317,8 +357,11 @@ async def extract_one(
                 return FacilityAssessment.model_validate_json(content), {
                     "prompt_tokens": total_prompt_tokens,
                     "completion_tokens": total_completion_tokens,
+                    "validation_retries": 0,
+                    "facility_name": facility_name,
                 }
             except (ValidationError, json.JSONDecodeError) as first_error:
+                log_validation_failure(row, "first", first_error, content)
                 messages.extend(
                     [
                         {"role": "assistant", "content": content},
@@ -334,6 +377,7 @@ async def extract_one(
                                 "in the system prompt\n"
                                 "- contradiction_type must match the enum exactly\n"
                                 "- evidence_snippet must be ≤200 chars\n\n"
+                                f"{SCHEMA_RULE_BLOCK}\n\n"
                                 "Return ONLY corrected JSON. No markdown, no preamble."
                             ),
                         },
@@ -348,16 +392,23 @@ async def extract_one(
                     return FacilityAssessment.model_validate_json(retry_content), {
                         "prompt_tokens": total_prompt_tokens,
                         "completion_tokens": total_completion_tokens,
+                        "validation_retries": 1,
+                        "facility_name": facility_name,
                     }
                 except (ValidationError, json.JSONDecodeError) as second_error:
+                    log_validation_failure(row, "retry", second_error, retry_content)
                     return fallback_assessment(row, second_error), {
                         "prompt_tokens": total_prompt_tokens,
                         "completion_tokens": total_completion_tokens,
+                        "validation_retries": 1,
+                        "facility_name": facility_name,
                     }
         except Exception as error:
             return fallback_assessment(row, error), {
                 "prompt_tokens": total_prompt_tokens,
                 "completion_tokens": total_completion_tokens,
+                "validation_retries": 0,
+                "facility_name": facility_name,
             }
 
 
@@ -438,6 +489,14 @@ async def run_test() -> None:
 
     estimated_prompt_tokens = sum(count_prompt_tokens_for_visibility(row) for _, row in test_rows.iterrows())
     print(f"Selected {len(test_rows)} rows for LLM extraction test.")
+    print("Critical demo rows in test set:")
+    for name_fragment, city in DEMO_FACILITIES:
+        in_test = (
+            test_rows["name"].astype(str).str.casefold().str.contains(name_fragment.casefold(), regex=False)
+            & (test_rows["address_city"].astype(str).str.casefold() == city.casefold())
+        ).any()
+        status = "yes" if in_test else "NO"
+        print(f"  {name_fragment} in {city}: {status}")
     print(f"Estimated local prompt tokens before API call: {estimated_prompt_tokens}")
 
     async with httpx.AsyncClient() as client:
@@ -450,6 +509,12 @@ async def run_test() -> None:
 
     prompt_tokens = sum(usage["prompt_tokens"] for _, usage in results)
     completion_tokens = sum(usage["completion_tokens"] for _, usage in results)
+    validation_retries = sum(int(usage.get("validation_retries", 0)) for _, usage in results)
+    aastha_retries = sum(
+        int(usage.get("validation_retries", 0))
+        for _, usage in results
+        if "aastha children hospital" in str(usage.get("facility_name", "")).casefold()
+    )
     fallback_count = sum(
         1
         for assessment in assessments
@@ -467,6 +532,8 @@ async def run_test() -> None:
     print(f"  prompt_tokens: {prompt_tokens}")
     print(f"  completion_tokens: {completion_tokens}")
     print(f"  total_tokens: {prompt_tokens + completion_tokens}")
+    print(f"\nValidation retries attempted: {validation_retries}")
+    print(f"Aastha Children Hospital validation retries: {aastha_retries}")
     print(f"\nFallback rows: {fallback_count}")
     print(f"\nTotal estimated cost for test: ${total_cost:.6f}")
 
