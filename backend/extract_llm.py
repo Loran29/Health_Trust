@@ -9,9 +9,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-import httpx
+import openai
 import pandas as pd
-import tiktoken
 from dotenv import load_dotenv
 from pydantic import ValidationError
 from tqdm.asyncio import tqdm_asyncio
@@ -38,7 +37,6 @@ except ImportError:
     )
 
 
-API_URL = "https://api.openai.com/v1/chat/completions"
 MODEL = "gpt-4o-mini"
 INPUT_COST_PER_1M = 0.15
 OUTPUT_COST_PER_1M = 0.60
@@ -47,7 +45,7 @@ FULL_ROWS_PATH = Path("data/facilities_clean.parquet")
 ASSESSMENTS_OUTPUT_PATH = Path("backend/data/assessments_llm.parquet")
 FAILURE_LOG_PATH = Path("backend/data/extraction_failures.log")
 RANDOM_STATE = 42
-FULL_CONCURRENCY = 10
+FULL_CONCURRENCY = 20
 CHECKPOINT_EVERY = 100
 COST_LIMIT_USD = 10.00
 FALLBACK_WINDOW_SIZE = 500
@@ -271,13 +269,12 @@ def build_user_prompt(row: pd.Series) -> str:
     return "\n".join(f"{key}: {value}" for key, value in fields)
 
 
-def usage_from_response(response_json: dict[str, Any]) -> tuple[int, int]:
-    usage = response_json.get("usage") or {}
-    return int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
-
-
-def response_content(response_json: dict[str, Any]) -> str:
-    return response_json["choices"][0]["message"]["content"]
+def _strip_json_fences(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```[^\n]*\n?", "", text)
+        text = re.sub(r"\n?```$", "", text)
+    return text.strip()
 
 
 def fallback_assessment(row: pd.Series, error: Exception | str) -> FacilityAssessment:
@@ -322,57 +319,46 @@ def fallback_assessment(row: pd.Series, error: Exception | str) -> FacilityAsses
     )
 
 
-async def post_chat_completion(
-    client: httpx.AsyncClient,
-    api_key: str,
-    messages: list[dict[str, str]],
-) -> dict[str, Any]:
-    response = await client.post(
-        API_URL,
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-        json={
-            "model": MODEL,
-            "messages": messages,
-            "temperature": 0,
-            "response_format": {"type": "json_object"},
-            "max_tokens": 3500,
-        },
-        timeout=60,
-    )
-    response.raise_for_status()
-    return response.json()
+MAX_RATE_LIMIT_RETRIES = 6
+
+
+async def _create_with_retry(client: openai.AsyncOpenAI, **kwargs: Any) -> Any:
+    for attempt in range(MAX_RATE_LIMIT_RETRIES):
+        try:
+            return await client.chat.completions.create(**kwargs)
+        except openai.RateLimitError as exc:
+            if attempt == MAX_RATE_LIMIT_RETRIES - 1:
+                raise
+            match = re.search(r"retry after (\d+)", str(exc), re.IGNORECASE)
+            wait = int(match.group(1)) + 1 if match else min(2 ** attempt + 1, 30)
+            await asyncio.sleep(wait)
 
 
 async def extract_one(
-    client: httpx.AsyncClient,
+    client: openai.AsyncOpenAI,
     row: pd.Series,
     semaphore: asyncio.Semaphore,
 ) -> tuple[FacilityAssessment, dict[str, Any]]:
     async with semaphore:
         facility_name = scalar_or_null(row.get("name"))
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            return fallback_assessment(row, "OPENAI_API_KEY is missing"), {
-                "prompt_tokens": 0,
-                "completion_tokens": 0,
-                "validation_retries": 0,
-                "facility_name": facility_name,
-            }
-
         user_prompt = build_user_prompt(row)
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ]
         total_prompt_tokens = 0
         total_completion_tokens = 0
 
         try:
-            response_json = await post_chat_completion(client, api_key, messages)
-            prompt_tokens, completion_tokens = usage_from_response(response_json)
-            total_prompt_tokens += prompt_tokens
-            total_completion_tokens += completion_tokens
-            content = response_content(response_json)
+            msg = await _create_with_retry(
+                client,
+                model=MODEL,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format={"type": "json_object"},
+                max_completion_tokens=3500,
+            )
+            total_prompt_tokens += msg.usage.prompt_tokens
+            total_completion_tokens += msg.usage.completion_tokens
+            content = _strip_json_fences(msg.choices[0].message.content)
             try:
                 return FacilityAssessment.model_validate_json(content), {
                     "prompt_tokens": total_prompt_tokens,
@@ -382,8 +368,12 @@ async def extract_one(
                 }
             except (ValidationError, json.JSONDecodeError) as first_error:
                 log_validation_failure(row, "first", first_error, content)
-                messages.extend(
-                    [
+                retry_msg = await _create_with_retry(
+                    client,
+                    model=MODEL,
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
                         {"role": "assistant", "content": content},
                         {
                             "role": "user",
@@ -401,13 +391,13 @@ async def extract_one(
                                 "Return ONLY corrected JSON. No markdown, no preamble."
                             ),
                         },
-                    ]
+                    ],
+                    response_format={"type": "json_object"},
+                    max_completion_tokens=3500,
                 )
-                retry_json = await post_chat_completion(client, api_key, messages)
-                prompt_tokens, completion_tokens = usage_from_response(retry_json)
-                total_prompt_tokens += prompt_tokens
-                total_completion_tokens += completion_tokens
-                retry_content = response_content(retry_json)
+                total_prompt_tokens += retry_msg.usage.prompt_tokens
+                total_completion_tokens += retry_msg.usage.completion_tokens
+                retry_content = _strip_json_fences(retry_msg.choices[0].message.content)
                 try:
                     return FacilityAssessment.model_validate_json(retry_content), {
                         "prompt_tokens": total_prompt_tokens,
@@ -583,8 +573,8 @@ def prompt_to_continue(reason: str) -> bool:
     try:
         answer = input("Continue? Type 'yes' to continue: ").strip().casefold()
     except EOFError:
-        print("No interactive input available; stopping after saved checkpoint.")
-        return False
+        print("No interactive input available; auto-continuing.")
+        return True
     return answer == "yes"
 
 
@@ -634,11 +624,7 @@ def print_full_summary(
 
 
 def count_prompt_tokens_for_visibility(row: pd.Series) -> int:
-    try:
-        encoding = tiktoken.encoding_for_model(MODEL)
-    except KeyError:
-        encoding = tiktoken.get_encoding("o200k_base")
-    return len(encoding.encode(SYSTEM_PROMPT + "\n" + build_user_prompt(row)))
+    return len(SYSTEM_PROMPT + "\n" + build_user_prompt(row)) // 4
 
 
 async def run_test() -> None:
@@ -659,9 +645,9 @@ async def run_test() -> None:
         print(f"  {name_fragment} in {city}: {status}")
     print(f"Estimated local prompt tokens before API call: {estimated_prompt_tokens}")
 
-    async with httpx.AsyncClient() as client:
-        tasks = [extract_one(client, row, semaphore) for _, row in test_rows.iterrows()]
-        results = await tqdm_asyncio.gather(*tasks, desc="Extracting")
+    client = openai.AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    tasks = [extract_one(client, row, semaphore) for _, row in test_rows.iterrows()]
+    results = await tqdm_asyncio.gather(*tasks, desc="Extracting")
 
     assessments = [assessment for assessment, _ in results]
     for assessment in assessments:
@@ -726,93 +712,149 @@ async def run_full() -> None:
     window_fallbacks = 0
     reached_500_checkpoint = False
 
-    async with httpx.AsyncClient() as client:
-        for start in range(0, len(todo), CHECKPOINT_EVERY):
-            chunk = todo.iloc[start : start + CHECKPOINT_EVERY]
-            tasks = [extract_one(client, row, semaphore) for _, row in chunk.iterrows()]
-            results = await tqdm_asyncio.gather(
-                *tasks,
-                desc=f"Extracting rows {start + 1}-{start + len(chunk)}",
+    client = openai.AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    for start in range(0, len(todo), CHECKPOINT_EVERY):
+        chunk = todo.iloc[start : start + CHECKPOINT_EVERY]
+        tasks = [extract_one(client, row, semaphore) for _, row in chunk.iterrows()]
+        results = await tqdm_asyncio.gather(
+            *tasks,
+            desc=f"Extracting rows {start + 1}-{start + len(chunk)}",
+        )
+
+        for assessment, usage in results:
+            FacilityAssessment.model_validate(assessment.model_dump())
+            record = assessment_to_record(assessment, usage)
+            records.append(record)
+            run_prompt_tokens += int(usage.get("prompt_tokens", 0))
+            run_completion_tokens += int(usage.get("completion_tokens", 0))
+            run_processed += 1
+            window_processed += 1
+            if record["has_fallback"]:
+                run_fallbacks += 1
+                window_fallbacks += 1
+
+        atomic_write_parquet(records, ASSESSMENTS_OUTPUT_PATH)
+
+        rows_done = len(records)
+        rows_remaining = max(0, total_rows - rows_done)
+        fallback_pct = (run_fallbacks / run_processed * 100) if run_processed else 0
+        current_cost = cost_usd(run_prompt_tokens, run_completion_tokens)
+        elapsed = time.perf_counter() - started_at
+        speed = run_processed / elapsed if elapsed > 0 else 0
+        eta = rows_remaining / speed if speed else float("inf")
+        projected_total_cost = (current_cost / run_processed * total_rows) if run_processed else 0
+
+        print("\nProgress checkpoint:")
+        print(f"  Rows done: {rows_done:,}")
+        print(f"  Rows remaining: {rows_remaining:,}")
+        print(f"  Fallback count this run: {run_fallbacks:,}")
+        print(f"  Fallback rate this run: {fallback_pct:.2f}%")
+        print(f"  Running cost this run: ${current_cost:.4f}")
+        print(f"  Projected total cost for 10,000 rows at current average: ${projected_total_cost:.4f}")
+        print(f"  Estimated time remaining: {format_seconds(eta)}")
+        print(f"  Saved checkpoint: {ASSESSMENTS_OUTPUT_PATH.as_posix()}")
+
+        if current_cost > COST_LIMIT_USD:
+            if not prompt_to_continue(f"running cost ${current_cost:.2f} exceeds ${COST_LIMIT_USD:.2f}"):
+                print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+                return
+
+        if window_processed >= FALLBACK_WINDOW_SIZE:
+            window_rate = window_fallbacks / window_processed
+            print(
+                f"  Last {window_processed:,}-row fallback window: "
+                f"{window_fallbacks:,} ({window_rate * 100:.2f}%)"
             )
-
-            for assessment, usage in results:
-                FacilityAssessment.model_validate(assessment.model_dump())
-                record = assessment_to_record(assessment, usage)
-                records.append(record)
-                run_prompt_tokens += int(usage.get("prompt_tokens", 0))
-                run_completion_tokens += int(usage.get("completion_tokens", 0))
-                run_processed += 1
-                window_processed += 1
-                if record["has_fallback"]:
-                    run_fallbacks += 1
-                    window_fallbacks += 1
-
-            atomic_write_parquet(records, ASSESSMENTS_OUTPUT_PATH)
-
-            rows_done = len(records)
-            rows_remaining = max(0, total_rows - rows_done)
-            fallback_pct = (run_fallbacks / run_processed * 100) if run_processed else 0
-            current_cost = cost_usd(run_prompt_tokens, run_completion_tokens)
-            elapsed = time.perf_counter() - started_at
-            speed = run_processed / elapsed if elapsed > 0 else 0
-            eta = rows_remaining / speed if speed else float("inf")
-            projected_total_cost = (current_cost / run_processed * total_rows) if run_processed else 0
-
-            print("\nProgress checkpoint:")
-            print(f"  Rows done: {rows_done:,}")
-            print(f"  Rows remaining: {rows_remaining:,}")
-            print(f"  Fallback count this run: {run_fallbacks:,}")
-            print(f"  Fallback rate this run: {fallback_pct:.2f}%")
-            print(f"  Running cost this run: ${current_cost:.4f}")
-            print(f"  Projected total cost for 10,000 rows at current average: ${projected_total_cost:.4f}")
-            print(f"  Estimated time remaining: {format_seconds(eta)}")
-            print(f"  Saved checkpoint: {ASSESSMENTS_OUTPUT_PATH.as_posix()}")
-
-            if current_cost > COST_LIMIT_USD:
-                if not prompt_to_continue(f"running cost ${current_cost:.2f} exceeds ${COST_LIMIT_USD:.2f}"):
+            should_pause_for_quality = window_rate > FALLBACK_WINDOW_LIMIT
+            window_processed = 0
+            window_fallbacks = 0
+            if should_pause_for_quality:
+                if not prompt_to_continue(
+                    f"fallback rate exceeded {FALLBACK_WINDOW_LIMIT * 100:.1f}% in the last 500 rows"
+                ):
                     print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
                     return
 
-            if window_processed >= FALLBACK_WINDOW_SIZE:
-                window_rate = window_fallbacks / window_processed
-                print(
-                    f"  Last {window_processed:,}-row fallback window: "
-                    f"{window_fallbacks:,} ({window_rate * 100:.2f}%)"
-                )
-                should_pause_for_quality = window_rate > FALLBACK_WINDOW_LIMIT
-                window_processed = 0
-                window_fallbacks = 0
-                if should_pause_for_quality:
-                    if not prompt_to_continue(
-                        f"fallback rate exceeded {FALLBACK_WINDOW_LIMIT * 100:.1f}% in the last 500 rows"
-                    ):
-                        print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
-                        return
-
-            if run_processed >= 500 and not reached_500_checkpoint:
-                reached_500_checkpoint = True
-                if not prompt_to_continue("500-row checkpoint reached for cost/fallback review"):
-                    print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
-                    return
+        if run_processed >= 500 and not reached_500_checkpoint:
+            reached_500_checkpoint = True
+            if not prompt_to_continue("500-row checkpoint reached for cost/fallback review"):
+                print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
+                return
 
     print_full_summary(records, run_prompt_tokens, run_completion_tokens, started_at, total_rows)
 
 
+async def run_rerun_fallbacks() -> None:
+    load_dotenv()
+    started_at = time.perf_counter()
+    existing = pd.read_parquet(ASSESSMENTS_OUTPUT_PATH)
+    fallback_ids = set(existing.loc[existing["has_fallback"] == True, "facility_id"].astype(str))
+
+    if not fallback_ids:
+        print("No fallback rows found — nothing to rerun.")
+        return
+
+    facilities = prepare_full_rows(pd.read_parquet(FULL_ROWS_PATH))
+    todo = facilities[facilities["facility_id"].isin(fallback_ids)].reset_index(drop=True)
+    non_fallback = existing[existing["has_fallback"] != True].to_dict(orient="records")
+
+    print(f"Fallback rows to rerun: {len(todo):,}")
+    print(f"Non-fallback rows kept as-is: {len(non_fallback):,}")
+
+    semaphore = asyncio.Semaphore(FULL_CONCURRENCY)
+    run_prompt_tokens = 0
+    run_completion_tokens = 0
+    run_processed = 0
+    run_fallbacks = 0
+    records = list(non_fallback)
+
+    client = openai.AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    for start in range(0, len(todo), CHECKPOINT_EVERY):
+        chunk = todo.iloc[start : start + CHECKPOINT_EVERY]
+        tasks = [extract_one(client, row, semaphore) for _, row in chunk.iterrows()]
+        results = await tqdm_asyncio.gather(
+            *tasks,
+            desc=f"Rerunning rows {start + 1}-{start + len(chunk)}",
+        )
+
+        for assessment, usage in results:
+            record = assessment_to_record(assessment, usage)
+            records.append(record)
+            run_prompt_tokens += int(usage.get("prompt_tokens", 0))
+            run_completion_tokens += int(usage.get("completion_tokens", 0))
+            run_processed += 1
+            if record["has_fallback"]:
+                run_fallbacks += 1
+
+        atomic_write_parquet(records, ASSESSMENTS_OUTPUT_PATH)
+        fallback_pct = (run_fallbacks / run_processed * 100) if run_processed else 0
+        print(f"\nRerun checkpoint: {run_processed:,}/{len(todo):,} done | fallback rate: {fallback_pct:.1f}%")
+
+    print(f"\nRerun complete. {run_processed:,} rows reprocessed, {run_fallbacks:,} still fallback.")
+    print(f"Wall time: {format_seconds(time.perf_counter() - started_at)}")
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run OpenAI LLM extraction for TrustMap facilities.")
+    parser = argparse.ArgumentParser(description="Run LLM extraction for TrustMap facilities.")
     parser.add_argument("--test", action="store_true", help="Run the 20-row extraction quality test.")
     parser.add_argument("--full", action="store_true", help="Run resumable LLM extraction for all 10,000 rows.")
+    parser.add_argument("--rerun-fallbacks", action="store_true", help="Rerun only rows marked has_fallback=True.")
     args = parser.parse_args()
 
-    if args.test and args.full:
-        raise SystemExit("Choose only one mode: --test or --full.")
-    if not args.test and not args.full:
-        raise SystemExit("Choose a mode: --test or --full.")
+    modes = [args.test, args.full, args.rerun_fallbacks]
+    if sum(modes) > 1:
+        raise SystemExit("Choose only one mode: --test, --full, or --rerun-fallbacks.")
+    if sum(modes) == 0:
+        raise SystemExit("Choose a mode: --test, --full, or --rerun-fallbacks.")
 
     if args.test:
         asyncio.run(run_test())
-    else:
+    elif args.full:
         asyncio.run(run_full())
+    else:
+        asyncio.run(run_rerun_fallbacks())
 
 
 if __name__ == "__main__":

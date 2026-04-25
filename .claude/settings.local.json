@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv/Scripts/python.exe -m backend.extract_llm --rerun-fallbacks)",
+      "Bash(cmd //c \"cd /d C:\\\\Users\\\\I762644\\\\Health_Trust && python --version 2>&1 && python -c \\\\\"import sys; print\\(sys.executable\\)\\\\\"\")",
+      "Bash(cmd //c \"cd /d C:\\\\Users\\\\I762644\\\\Health_Trust && python -c \\\\\"import sys; print\\(sys.executable\\)\\\\\" 2>&1\")",
+      "Bash(cmd //c \"cd /d C:\\\\Users\\\\I762644\\\\Health_Trust && python --version\")",
+      "Bash(cmd //c \"cd /d C:\\\\Users\\\\I762644\\\\Health_Trust && python -m backend.extract_llm --help 2>&1\")",
+      "Bash(cmd //c \"cd /d C:\\\\Users\\\\I762644\\\\Health_Trust && python -m pip show httpx 2>&1 | head -3\")"
+    ]
+  }
+}
