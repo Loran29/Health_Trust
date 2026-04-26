@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
     from backend.agent import run_query
+    from backend.evidence import get_evidence_snippets
     from backend.trust_score import (
         activity_signal_score,
         capability_plausibility_score,
@@ -37,6 +38,7 @@ try:
     )
 except ImportError:
     from agent import run_query  # type: ignore[no-redef]
+    from evidence import get_evidence_snippets  # type: ignore[no-redef]
     from trust_score import (  # type: ignore[no-redef]
         activity_signal_score,
         capability_plausibility_score,
@@ -393,8 +395,8 @@ async def query(request: QueryRequest) -> dict:
     }
 
 
-@app.get("/facility/{facility_id}", response_model=FacilityAssessment)
-def get_facility(facility_id: str) -> FacilityAssessment:
+@app.get("/facility/{facility_id}")
+def get_facility(facility_id: str) -> dict:
     if _assessments is None or facility_id not in _assessments.index:
         raise HTTPException(status_code=404, detail="Facility not found")
 
@@ -460,7 +462,7 @@ def get_facility(facility_id: str) -> FacilityAssessment:
 
     ci_int = _ci_ints(ci)
 
-    return FacilityAssessment(
+    assessment = FacilityAssessment(
         facility_id=facility_id,
         facility_name=str(asmt.get("facility_name") or ""),
         city=str(asmt.get("city") or ""),
@@ -480,6 +482,15 @@ def get_facility(facility_id: str) -> FacilityAssessment:
         confidence_interval=ci_int,
         reasoning_summary=str(asmt.get("reasoning_summary") or "")[:200],
     )
+
+    result = assessment.model_dump()
+    try:
+        result["evidence_snippets"] = get_evidence_snippets(
+            facility_id, _facilities, _assessments
+        )
+    except Exception:
+        result["evidence_snippets"] = {}
+    return result
 
 
 @app.get("/districts")
