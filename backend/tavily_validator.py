@@ -218,7 +218,7 @@ def batch_verify_top_suspicious(n: int = 20) -> list[dict]:
     VERIFICATIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(VERIFICATIONS_PATH, "w", encoding="utf-8") as f:
         json.dump(verifications, f, indent=2, ensure_ascii=False)
-    print(f"\n[tavily] Saved {len(verifications)} verifications → {VERIFICATIONS_PATH}")
+    print(f"\n[tavily] Saved {len(verifications)} verifications -> {VERIFICATIONS_PATH}")
 
     # Summary table
     col_w = [40, 18, 7, 12, 8]

@@ -1,0 +1,475 @@
+[
+  {
+    "facility_name": "Jeevan Deep Special Care & Diagnostic Centre",
+    "city": "Berhampore",
+    "web_verified": false,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Berhampore-West-Bengal/Jeevandeep-Special-care-Diagnostic-Centre-Near-Bhakuria-Panchayet-Berhampore-Station-Road/9999P3482-3482-160702152904-E8Q6_BZDET",
+      "https://jeevandeepspecialcare.com/",
+      "https://www.justdial.com/Berhampore-West-Bengal/Jeevandeep-Special-care-Diagnostic-Centre-Near-Bhakuria-Panchayet-Berhampore-Station-Road/9999P3482-3482-160702152904-E8Q6_BZDET/photos",
+      "https://www.facebook.com/jeevandeepspecialcare/",
+      "https://www.zaubacorp.com/JEEVANDEEP-SPECIAL-CARE-AND-DIAGNOSTIC-CENTRE-PRIVATE-LIMITED-U85110WB2007PTC112889"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery",
+      "orthopedics"
+    ],
+    "capabilities_not_found_on_web": [
+      "obstetrics",
+      "primary_care",
+      "mental_health"
+    ],
+    "verification_summary": "Facility name not directly found in web results; 2/5 capabilities have web evidence.",
+    "trust_score": 22.8
+  },
+  {
+    "facility_name": "Apex Plus Multispeciality Hospital",
+    "city": "Una",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://m.facebook.com/61560506594423/about/",
+      "https://apexplushospital.com/",
+      "https://www.instagram.com/reel/DXb5oHkDKJ3/",
+      "https://apexplushospital.com/contact-us/",
+      "https://www.justdial.com/Una-Gujarat/APEX-PLUS-MULTISPECIALITY-HOSPITAL-Umiyawadi-Kesariya/9999PX285-X285-250613103116-W5W9_BZDET"
+    ],
+    "capabilities_confirmed_by_web": [
+      "pediatrics",
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [
+      "icu",
+      "emergency",
+      "obstetrics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 2/5 claimed capabilities confirmed online.",
+    "trust_score": 23.5
+  },
+  {
+    "facility_name": "Jmr Hospitals",
+    "city": "Eluru",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.instagram.com/jmrhospitals/",
+      "https://www.facebook.com/jmrhospitals/",
+      "https://www.justdial.com/Eluru/Jmr-Hospitals-Powerpet/9999P8812-8812-240223025602-A3G8_BZDET",
+      "https://jmrhospitals.com/",
+      "https://www.drlogy.com/ayushman-bharat/hospitals/andhra-pradesh/eluru/jmr-hospitals?srsltid=AfmBOopzyzz4V2Y35ASJFJva-SZFjnC3d5yRiVyboyDOSS-kKu_yG7mB"
+    ],
+    "capabilities_confirmed_by_web": [
+      "emergency",
+      "surgery",
+      "icu",
+      "obstetrics",
+      "cardiology",
+      "orthopedics"
+    ],
+    "capabilities_not_found_on_web": [
+      "mental_health"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 6/7 claimed capabilities confirmed online.",
+    "trust_score": 23.5
+  },
+  {
+    "facility_name": "Kalyan Hospital",
+    "city": "Vadodara",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://kalyanhospital.co.in/",
+      "https://kalyanhospital.co.in/hospital-at-a-glance/",
+      "https://www.lybrate.com/vadodara/clinic/kalyan-hospital-alkapuri",
+      "https://www.justdial.com/Vadodara/Kalyan-Hospital-Behind-Express-Hotel-Alkapuri/0265PX265-X265-170519163152-R5B3_BZDET",
+      "https://www.hexahealth.com/vadodara/hospital/kalyan-hospital-alkapuri"
+    ],
+    "capabilities_confirmed_by_web": [
+      "emergency",
+      "icu",
+      "surgery",
+      "oncology"
+    ],
+    "capabilities_not_found_on_web": [
+      "obstetrics",
+      "pediatrics",
+      "cardiology",
+      "dermatology",
+      "ophthalmology"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 4/9 claimed capabilities confirmed online.",
+    "trust_score": 24.2
+  },
+  {
+    "facility_name": "72 BPM Healthcare, Multi Specialty Hospital",
+    "city": "Jammu",
+    "web_verified": false,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.facebook.com/jammulinksnews/photos/two-day-mega-medical-camp-commences-at-72-bpm-healthcare-jammu-january-10-in-an-/932283476807420/",
+      "https://www.justdial.com/Jammu/Dr-Sumeru-Raina-Behind-Jammu-Darbar-Resturant-Chani-Himat/9999PX191-X191-221021221547-K7B4_BZDET",
+      "https://www.mappls.com/poczas",
+      "https://www.justdial.com/Jammu/72-Bpm-Health-Care-Behind-Jammu-Darbarjammu-Chani-Himat/9999PX191-X191-231018201041-B4S3_BZDET",
+      "https://www.facebook.com/72bpm/"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [
+      "emergency",
+      "icu",
+      "obstetrics",
+      "orthopedics",
+      "dentistry",
+      "runs_24_7"
+    ],
+    "verification_summary": "Facility name not directly found in web results; 1/7 capabilities have web evidence.",
+    "trust_score": 24.2
+  },
+  {
+    "facility_name": "Al-Noor Multi Speciality Clinic & DNA Diagnostic Center",
+    "city": "Azamgarh",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.facebook.com/p/Al-Noor-Multi-Speciality-Clinic-DNA-Diagnostic-Center-100064159659777/",
+      "https://www.facebook.com/116116233632116/",
+      "https://www.justdial.com/Azamgarh/Al-Noor-Clinic-DNA-Diagnostic-Center-Kharewan-Mod-Saraimeer/9999P5252-5252-191101180200-K5B6_BZDET/booklab-visit",
+      "https://www.practo.com/azamgarh/clinic/al-noor-clinic-3-saraimeer",
+      "https://www.facebook.com/100064159659777/posts/transform-your-skin-now-experience-expert-dermatology-care-at-al-noor-multi-spec/1364689839012992/"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery",
+      "cardiology"
+    ],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "obstetrics",
+      "mental_health"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 2/5 claimed capabilities confirmed online.",
+    "trust_score": 24.5
+  },
+  {
+    "facility_name": "Ashtavinayak Hospital Raipur Hospital/Clinic",
+    "city": "Raipur",
+    "web_verified": false,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.drlogy.com/raipur/clinic/ashtavinayak-hospital?srsltid=AfmBOoq9lfudQzvoSLuJDW0AnRnwuN7hRRR_MbccASmSVWecHdLv9rVL",
+      "https://www.genexehr.com/raipur-chhattisgarh/clinic/cl-ashtavinayak-hospital-vidhan-sabha",
+      "https://www.facebook.com/AshtavinayakHospitalRaipur/",
+      "https://www.instagram.com/ashtavinayak_hospital_raipur/",
+      "https://www.lybrate.com/amp/raipur/clinic/ashtavinayak-hospital-vidhan-sabha-marg"
+    ],
+    "capabilities_confirmed_by_web": [
+      "pediatrics",
+      "surgery",
+      "obstetrics"
+    ],
+    "capabilities_not_found_on_web": [
+      "orthopedics"
+    ],
+    "verification_summary": "Facility name not directly found in web results; 3/4 capabilities have web evidence.",
+    "trust_score": 24.5
+  },
+  {
+    "facility_name": "City Health Clinic & Diagnostic",
+    "city": "Guwahati",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.facebook.com/Cityhealthghy/",
+      "https://www.hexahealth.com/guwahati/hospital/city-health-clinic-and-diagnostics-pahar",
+      "https://www.instagram.com/cityhealthghy/",
+      "https://www.justdial.com/Guwahati/City-Health-Clinic-Diagnostic-Rehabari/9999PX361-X361-230420115325-F8Q3_BZDET",
+      "https://www.docsmart.in/diagnostics-lab/guwahati/City_Health_Clinic_&_Diagnostics_8005"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "oncology",
+      "cardiology"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 1/4 claimed capabilities confirmed online.",
+    "trust_score": 24.5
+  },
+  {
+    "facility_name": "MAHUA MEDANTA HOSPITAL",
+    "city": "Vaishali",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://nirogstreet.com/ayurveda/vaishali/doctor/mahua-medanta-hospital?srsltid=AfmBOoqYMnyqz1ilYKOnPsydDAmm8hJyq4Wp7f2fLABrLET3I_llxp-l",
+      "https://piceapp.com/gst-number-search/mahua-medanta-hospital-10ajepa3155b3z9/",
+      "https://www.drlogy.com/ayushman-bharat/hospitals/bihar/vaishali/sdh-mahua?srsltid=AfmBOopvXK_5iHRQCZcc7tNDiqgVoB0PwIYqHZYqwN8M-Cl2zlNVdIpt",
+      "https://www.justdial.com/Ghaziabad/Medanta-The-Medicity-Hospital-in-Vaishali-Sector-4/nct-12144443",
+      "https://www.justdial.com/Vaishali/Dewa-Hospital-Near-Mahua-Vaishali/9999PX621-X621-180327061329-F2M2_BZDET/amp"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "emergency",
+      "runs_24_7",
+      "icu",
+      "orthopedics",
+      "pediatrics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 1/7 claimed capabilities confirmed online.",
+    "trust_score": 25.2
+  },
+  {
+    "facility_name": "Care Towards Cure",
+    "city": "Jaipur",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Jaipur/Care-Towards-Cure-Opposite-Triveni-Hieghts-Triveni-Nagar-Gopalpura-Bypass/0141PX141-X141-170415135500-P5Q7_BZDET",
+      "https://www.facebook.com/caretowardscure/",
+      "https://www.justdial.com/Jaipur/Care-Towards-Cure-Opposite-Gangori-Gate-Gangori-Bazar/0141P141STD68864_BZDET",
+      "https://www.balajihospitals.co.in/",
+      "https://www.practo.com/jaipur/clinic/a-cure-healthcare-multi-specialty-clinic-chitrakoot"
+    ],
+    "capabilities_confirmed_by_web": [],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "mental_health",
+      "primary_care",
+      "primary_care",
+      "primary_care",
+      "primary_care",
+      "obstetrics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 0/7 claimed capabilities confirmed online.",
+    "trust_score": 25.5
+  },
+  {
+    "facility_name": "Dr. Singh's Advanced Homeopathy",
+    "city": "Andheri West",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Mumbai/Dr-Singhs-Advanced-Homeopathy-Lokhandwala-Near-Infinity-Mall-Andheri-West/022PXX22-XX22-141229142513-F2Z8_BZDET",
+      "https://www.justdial.com/Mumbai/Dr-Rupesh-Singh-Dr-Singhs-Advanced-Homeopathy-Andheri-West/022PXX22-XX22-150810194118-I2X0_BZDET",
+      "https://www.practo.com/mumbai/clinic/dr-singh-s-advanced-homeopathy-clinic-mira-road-1/homoeopath-ps-22?referrer=profile_page",
+      "https://www.genexehr.com/clinic/cl-dr-singhs-advanced-homeopathy-clinic-andheri-west",
+      "https://www.justdial.com/Mumbai/Dr-Rupesh-Singh-Dr-Singhs-Advanced-Homeopathy-Andheri-West/022PXX22-XX22-150810194118-I2X0_BZDET/clinic-locations"
+    ],
+    "capabilities_confirmed_by_web": [],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "dermatology",
+      "obstetrics",
+      "orthopedics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 0/4 claimed capabilities confirmed online.",
+    "trust_score": 25.5
+  },
+  {
+    "facility_name": "Krishnawati Hospital",
+    "city": "Sonipat",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Sonepat/Krishnawati-Hospital-Opposite-To-Malviya-Schoolnear-Shani-Mandir-Jamalpura/9999PX130-X130-230316175335-L7C4_BZDET",
+      "https://gynecologistnearme.in/city/sonipat/krishnawati-hospital/",
+      "https://www.hexahealth.com/sonipat/hospital/krishnawati-hospital-new-mahavir-colony",
+      "https://www.medindia.net/directories/hospitals/krishnawati-hospital-sonipat-haryana-59486.htm",
+      "https://www.mouthshut.com/product-reviews/krishnawati-hospital-sonipat-reviews-926179531"
+    ],
+    "capabilities_confirmed_by_web": [
+      "obstetrics"
+    ],
+    "capabilities_not_found_on_web": [
+      "surgery",
+      "oncology",
+      "icu"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 1/4 claimed capabilities confirmed online.",
+    "trust_score": 26.0
+  },
+  {
+    "facility_name": "K.B.Neuro Centre",
+    "city": "Gorakhpur",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.doctoriduniya.com/clinic/gorakhpur/k-b-neuro-centre-dr-bhupendra-bhatia-gorakhpur",
+      "https://www.justdial.com/Gorakhpur/KBNeuro-Centre-Near-Arogya-Mandir-Medical-College-Rd-Rapti-Nagar/9999PX551-X551-170927193617-N4A8_BZDET",
+      "https://www.justdial.com/Gorakhpur/Kb-Neuro-Centre-Near-Arogya-Mandir-Gorrakhpur/9999PX551-X551-190325120917-C3V8_BZDET",
+      "https://www.justdial.com/Gorakhpur/DrBHUPENDRA-BHATIA-KBNEURO-CENTER-Near-Arogya-Mandir-Basharatpur/9999PX551-X551-210805161521-U7K4_BZDET",
+      "https://www.justdial.com/Gorakhpur/Dr-Bhupendra-Bhatia-KB-Neuro-Center-Near-Arogya-Mandir-Medical-Collage-Road-Arogyamandir/9999PX551-X551-171123145507-J3M6_BZDET"
+    ],
+    "capabilities_confirmed_by_web": [],
+    "capabilities_not_found_on_web": [
+      "emergency",
+      "icu"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 0/2 claimed capabilities confirmed online.",
+    "trust_score": 27.2
+  },
+  {
+    "facility_name": "Dr. Sulochana Homoeo Hospital",
+    "city": "Nandyala",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://nandyala.idbf.in/4106906/dr-sulochana-homoeo-hospital",
+      "https://www.justdial.com/Nandyal/Dr-Sulochana-Emergency-Homoeo-Hospital-Opposite-Ramalayam-Temple-Sanjeeva-Nagar/9999P8514-8514-180124160418-W9S4_BZDET/price-list",
+      "https://www.justdial.com/Nandyal/Dr-Sulochana-Emergency-Homoeo-Hospital-Opposite-Ramalayam-Temple-Sanjeeva-Nagar/9999P8514-8514-180124160418-W9S4_BZDET",
+      "https://www.mappls.com/bur3j2",
+      "https://drsulochanahomoeohospital.in/"
+    ],
+    "capabilities_confirmed_by_web": [],
+    "capabilities_not_found_on_web": [
+      "primary_care",
+      "pediatrics",
+      "obstetrics",
+      "dermatology",
+      "mental_health"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 0/5 claimed capabilities confirmed online.",
+    "trust_score": 27.2
+  },
+  {
+    "facility_name": "Kosmetica",
+    "city": "Vadodara",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.lybrate.com/vadodara/clinic/kosmetica-akota",
+      "https://www.facebook.com/p/Kosmetica-100063959138602/",
+      "https://www.hexahealth.com/vadodara/hospital/kosmetica-clinic-akota",
+      "https://www.drlogy.com/vadodara/clinic/kosmetica?srsltid=AfmBOooMjXGboCkPmHFS983HyowYJJ5fGPZwcc_VCuj_gsZ8uJyF7hiK",
+      "https://www.instagram.com/priyankkatwala/p/COcUjJjlTIP/"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [
+      "dentistry"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 1/2 claimed capabilities confirmed online.",
+    "trust_score": 27.2
+  },
+  {
+    "facility_name": "Priyanka Maternity &Surgical Hospital",
+    "city": "Mumbai",
+    "web_verified": false,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.hexahealth.com/mumbai/hospital/priyanka-maternity-and-surgical-hospital-saki-naka",
+      "https://www.timesmed.com/Hospital/Mumbai/priyanka-maternity-and-surgicals-37259",
+      "https://www.lybrate.com/mumbai/clinic/priyanka-maternity-surgical-nursing-home-andheri-east-1",
+      "https://www.justdial.com/Mumbai/Priyanka-Maternity-Surgical-Nursing-Hospital-Tilak-Nagar-Saki-Naka-Andheri-East/022PK035734_BZDET",
+      "https://www.practo.com/mumbai/hospital/priyanka-maternity-and-surgicals-andheri-east/services"
+    ],
+    "capabilities_confirmed_by_web": [
+      "obstetrics",
+      "surgery"
+    ],
+    "capabilities_not_found_on_web": [],
+    "verification_summary": "Facility name not directly found in web results; 2/2 capabilities have web evidence.",
+    "trust_score": 28.0
+  },
+  {
+    "facility_name": "Kelavkar Medical Centre",
+    "city": "Kolhapur",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Kolhapur/Kelavkar-Medical-Centre-Critical-Care-Unit-Opposite-Mahalaxmi-Bank-Behind-Hotel-Woodland-Tarabai-Park/0231P231STD9000288_BZDET",
+      "https://www.facebook.com/KelavkarMedicalCentre/",
+      "https://www.indiamart.com/kelavkar-medical-centre/aboutus.html?srsltid=AfmBOorrefSFG0cfJCYwZODxzSG2rifX2VKUu9CMrvKNeofohN4DbZH5",
+      "https://www.medindia.net/directories/hospitals/kelavkar-medical-centre-and-critical-care-unit-kolhapur-maharashtra-90001.htm",
+      "https://in.linkedin.com/company/kelavkar-medical-centre-kolhapur-"
+    ],
+    "capabilities_confirmed_by_web": [
+      "emergency",
+      "icu",
+      "surgery",
+      "primary_care"
+    ],
+    "capabilities_not_found_on_web": [
+      "pediatrics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 4/5 claimed capabilities confirmed online.",
+    "trust_score": 28.0
+  },
+  {
+    "facility_name": "Hoshiyari Devi Hospitals",
+    "city": "Hapur",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Hapur/Hoshiyari-Devi-Hospital-Anand-Vihar/9999PX122-X122-230821051902-K2A8_BZDET",
+      "https://hoshiyaridevihospitals.com/",
+      "https://hoshiyaridevihospitals.com/contact-2/",
+      "https://hoshiyaridevihospitals.com/facilities/",
+      "https://www.justdial.com/Hapur/Hospitals-in-Hapur-Mandi/nct-10253670"
+    ],
+    "capabilities_confirmed_by_web": [
+      "surgery",
+      "obstetrics",
+      "dentistry"
+    ],
+    "capabilities_not_found_on_web": [
+      "emergency",
+      "pediatrics",
+      "primary_care"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 3/6 claimed capabilities confirmed online.",
+    "trust_score": 28.0
+  },
+  {
+    "facility_name": "Aaditya Poly Clinic",
+    "city": "Hyderabad",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Hyderabad/Aditya-Sri-Poly-Clinic-Near-SAI-Baba-Temple-Lane-Kakatiya-Nagar-Neredmet/040PXX40-XX40-131227101004-L3Z5_BZDET",
+      "https://www.justdial.com/Hyderabad/Aaditya-Poly-Clinic-Above-Tvs-Showroom-Attapur/040PXX40-XX40-161117165513-D2E3_BZDET",
+      "https://www.skedoc.com/hyderabad/hospital/aaditya-poly-clinic-attapur",
+      "http://yp.infomericainc.com/b/aaditya-poly-clinic-attapur-hyderabad/786920468",
+      "https://www.justdial.com/Hyderabad/Aaditya-Eye-Care-Poly-Clinic-Near-Pillar-No-136-Above-TVS-Showroom-Attapur/040PXX40-XX40-131017180455-P4D4_BZDET/photos"
+    ],
+    "capabilities_confirmed_by_web": [
+      "ophthalmology"
+    ],
+    "capabilities_not_found_on_web": [
+      "dermatology",
+      "obstetrics"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 1/3 claimed capabilities confirmed online.",
+    "trust_score": 29.0
+  },
+  {
+    "facility_name": "Riyaz Hospital",
+    "city": "Nalhar",
+    "web_verified": true,
+    "sources_found": 5,
+    "web_sources": [
+      "https://www.justdial.com/Nuh/Riyaz-Hospital-Near-Tikona-Park-Nalhar/011PXX11-XX11-240704142029-M9Z7_BZDET",
+      "https://oladoc.com/pakistan/lahore/h/riaz-clinic/21567",
+      "https://www.eka.care/doctor/riyaz-ahmed-1773012302",
+      "https://www.instagram.com/p/DNuhGFDUBKd/",
+      "https://www.instagram.com/p/DN0DN6qwjeT/"
+    ],
+    "capabilities_confirmed_by_web": [
+      "emergency",
+      "obstetrics",
+      "pediatrics",
+      "runs_24_7"
+    ],
+    "capabilities_not_found_on_web": [
+      "primary_care"
+    ],
+    "verification_summary": "Facility found in 5 web sources; 4/5 claimed capabilities confirmed online.",
+    "trust_score": 29.8
+  }
+]

@@ -5,6 +5,8 @@ import json
 import os
 import re
 import sys
+import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +15,14 @@ import chromadb
 import pandas as pd
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 from dotenv import load_dotenv
+
+try:
+    import mlflow
+    import warnings as _w
+    _w.filterwarnings("ignore", category=FutureWarning, module="mlflow")
+    MLFLOW_AVAILABLE = True
+except ImportError:
+    MLFLOW_AVAILABLE = False
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -37,11 +47,66 @@ except ImportError:
     )
     from districts import normalize_state  # type: ignore[no-redef]
 
+# Optional — Tavily web verification. Agent works fine without it.
+try:
+    from backend.tavily_validator import verify_facility as _tavily_verify
+    _TAVILY_AVAILABLE = True
+except ImportError:
+    try:
+        from tavily_validator import verify_facility as _tavily_verify  # type: ignore[no-redef]
+        _TAVILY_AVAILABLE = True
+    except ImportError:
+        _TAVILY_AVAILABLE = False
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 
 load_dotenv()
+
+# ---------------------------------------------------------------------------
+# MLflow tracing setup (optional — agent works fine without it)
+# ---------------------------------------------------------------------------
+
+if MLFLOW_AVAILABLE:
+    try:
+        mlflow.set_tracking_uri("sqlite:///mlruns/mlflow.db")
+        mlflow.set_experiment("trustmap_india")
+    except Exception:
+        MLFLOW_AVAILABLE = False
+
+
+class _MlSpan:
+    """Fault-tolerant MLflow span wrapper — never raises, never blocks the pipeline."""
+    __slots__ = ("_cm", "_span")
+
+    def __init__(self, name: str) -> None:
+        self._cm: Any = None
+        self._span: Any = None
+        if MLFLOW_AVAILABLE:
+            try:
+                self._cm = mlflow.start_span(name=name)
+                self._span = self._cm.__enter__()
+            except Exception:
+                self._cm = None
+
+    def log(self, **attrs: Any) -> None:
+        if self._span is None:
+            return
+        try:
+            for k, v in attrs.items():
+                self._span.set_attribute(k, v)
+        except Exception:
+            pass
+
+    def close(self) -> None:
+        if self._cm is not None:
+            try:
+                self._cm.__exit__(None, None, None)
+            except Exception:
+                pass
+            self._cm = None
+
 
 ASSESSMENTS_PATH = Path("backend/data/assessments_llm.parquet")
 FACILITIES_PATH = Path("data/facilities_clean.parquet")
@@ -166,6 +231,27 @@ _llm: anthropic.AsyncAnthropic | None = None
 _chroma_coll: chromadb.Collection | None = None
 _merged_df: pd.DataFrame | None = None
 _districts_df: pd.DataFrame | None = None
+
+# Web verification cache — loaded once from the pre-verified JSON
+_WEB_VERIFICATIONS_PATH = Path("backend/data/web_verifications.json")
+_web_cache: dict[tuple[str, str], dict] = {}
+
+
+def _load_web_cache() -> None:
+    global _web_cache
+    try:
+        if _WEB_VERIFICATIONS_PATH.exists():
+            with open(_WEB_VERIFICATIONS_PATH, encoding="utf-8") as f:
+                records = json.load(f)
+            _web_cache = {
+                (r["facility_name"].lower(), r["city"].lower()): r
+                for r in records
+            }
+    except Exception:
+        pass
+
+
+_load_web_cache()
 
 
 def _get_llm() -> anthropic.AsyncAnthropic:
@@ -318,6 +404,36 @@ async def _plan(query: str) -> dict:
 # Step 2 — Retriever
 # ---------------------------------------------------------------------------
 
+# Mirrors _CRITICAL_CAPS_IN_PARQUET / _build_districts_cache in api.py
+_DESERT_CRITICAL_CAPS = [
+    "anesthesia", "cardiology", "dialysis", "emergency",
+    "icu", "obstetrics", "oncology", "pediatrics", "surgery",
+]
+
+
+def _recompute_desert_score(r: dict, df_cols: "set[str]") -> int:
+    """Same weighted formula as api.py _build_districts_cache."""
+    avg_trust = float(r.get("avg_trust_score") or 50.0)
+    num_facilities = int(r.get("total_facilities") or 0)
+    population = float(r.get("population") or 0.0)
+
+    num_unverified = sum(
+        1 for cap in _DESERT_CRITICAL_CAPS
+        if f"cap_{cap}" not in df_cols or int(r.get(f"cap_{cap}") or 0) == 0
+    ) + 1  # neonatal always unverified
+
+    fac_norm = min(1.0, (num_facilities / (population / 100_000)) / 10.0) if population > 0 else 0.0
+    contradiction_density = (100.0 - avg_trust) / 100.0
+
+    score = round(
+        0.40 * (100 - avg_trust)
+        + 0.30 * min(100, 20 * num_unverified)
+        + 0.20 * (1 - fac_norm) * 100
+        + 0.10 * contradiction_density * 100
+    )
+    return max(0, min(100, score))
+
+
 def _retrieve_deserts(plan: dict) -> tuple[list[dict], str]:
     df = _get_districts().copy()
     state = (plan["location_filters"]).get("state")
@@ -333,15 +449,21 @@ def _retrieve_deserts(plan: dict) -> tuple[list[dict], str]:
             df = df[df["state_clean"].str.lower().str.contains(state.lower(), na=False)]
             desc = state
 
+    # Recompute desert scores using the same formula as /districts endpoint
+    df_cols: set[str] = set(df.columns)
+    records = df.to_dict(orient="records")
+    for r in records:
+        r["_desert_score"] = _recompute_desert_score(r, df_cols)
+
     cap_col = f"cap_{cap_filters[0]}" if cap_filters else None
-    if cap_col and cap_col in df.columns:
-        df = df.sort_values(cap_col)
+    if cap_col and cap_col in df_cols:
+        records.sort(key=lambda r: int(r.get(cap_col) or 0))
         desc += f" | sorted by {cap_filters[0]} scarcity"
     else:
-        df = df.sort_values("desert_score")
+        records.sort(key=lambda r: r["_desert_score"], reverse=True)
 
     rows: list[dict] = []
-    for r in df.head(10).to_dict(orient="records"):
+    for r in records[:10]:
         top_gaps = r.get("top_gaps", "[]")
         if isinstance(top_gaps, str):
             try:
@@ -351,7 +473,7 @@ def _retrieve_deserts(plan: dict) -> tuple[list[dict], str]:
         entry: dict = {
             "district": r.get("district", ""),
             "state": r.get("state_clean", ""),
-            "desert_score": round(float(r.get("desert_score", 0)), 1),
+            "desert_score": r["_desert_score"],
             "total_facilities": int(r.get("total_facilities", 0)),
             "trustworthy_count": int(r.get("trustworthy_count", 0)),
             "avg_trust_score": round(float(r.get("avg_trust_score", 0)), 1),
@@ -453,22 +575,33 @@ async def _retrieve_facilities(query: str, plan: dict) -> tuple[list[dict], str]
 # Step 3 — Validator
 # ---------------------------------------------------------------------------
 
-async def _validate_one(query: str, candidate: dict) -> tuple[bool, str]:
+async def _validate_one(query: str, candidate: dict, intent: str) -> tuple[bool, str]:
     name = candidate.get("facility_name") or candidate.get("district", "?")
     city = candidate.get("city") or candidate.get("state", "")
     state_ = candidate.get("state", "")
     caps = ", ".join(candidate.get("capabilities") or []) or "(none)"
-    trust = candidate.get("trust_score", candidate.get("desert_score", "N/A"))
+    trust = candidate.get("trust_score", "N/A")
     n_contra = candidate.get("contradiction_count", 0)
-    score_label = "desert score" if "desert_score" in candidate else "trust score"
+    fac_type = candidate.get("facility_type", "unknown")
 
-    prompt = (
-        f"Query: '{query}'. "
-        f"Result: {name} in {city}, {state_}. "
-        f"Capabilities: {caps}. "
-        f"{score_label.capitalize()}: {trust}. Contradictions: {n_contra}. "
-        "Does this result match the query? Reply ONLY: YES or NO and one sentence reason."
-    )
+    if intent == "find_suspicious":
+        prompt = (
+            "The user is looking for suspicious or untrustworthy facilities. "
+            "A facility MATCHES if it has a low trust score (under 60), contradictions, "
+            "or capability claims that seem implausible for its type. "
+            f"Query: '{query}'. Facility: {name} in {city}. Type: {fac_type}. "
+            f"Trust score: {trust}. Contradictions: {n_contra}. Capabilities claimed: {caps}. "
+            "Does this facility match what the user is looking for? Reply YES or NO with one sentence."
+        )
+    else:  # find_facilities
+        prompt = (
+            "The user is looking for reliable facilities that can provide specific services. "
+            "A facility MATCHES if it has the required capabilities (confirmed or inferred) "
+            "and is in the right location. "
+            f"Query: '{query}'. Facility: {name} in {city}. "
+            f"Trust score: {trust}. Capabilities: {caps}. Location: {state_}. "
+            "Does this facility match what the user is looking for? Reply YES or NO with one sentence."
+        )
     try:
         msg = await _get_llm().messages.create(
             model=LLM_MODEL,
@@ -482,9 +615,9 @@ async def _validate_one(query: str, candidate: dict) -> tuple[bool, str]:
 
 
 async def _validate(
-    query: str, candidates: list[dict]
+    query: str, candidates: list[dict], intent: str
 ) -> tuple[list[dict], list[str]]:
-    outcomes = await asyncio.gather(*[_validate_one(query, c) for c in candidates])
+    outcomes = await asyncio.gather(*[_validate_one(query, c, intent) for c in candidates])
     steps: list[str] = []
     passed: list[dict] = []
     for cand, (ok, reason) in zip(candidates, outcomes):
@@ -497,7 +630,99 @@ async def _validate(
 
 
 # ---------------------------------------------------------------------------
-# Step 4 — Composer
+# Step 4 — Web Verification (optional, fault-tolerant)
+# ---------------------------------------------------------------------------
+
+def _adjust_ci(ci: list[float], web_verified: bool, confirmed_count: int) -> list[float]:
+    lo, hi = ci[0], ci[1]
+    if web_verified and confirmed_count > 0:
+        lo, hi = lo + 5, hi - 5      # narrow: extra confidence
+    elif web_verified and confirmed_count == 0:
+        lo, hi = lo - 10, hi + 10    # widen: found but caps unsubstantiated
+    else:
+        lo, hi = lo - 15, hi + 15    # widen more: not found on web at all
+    return [round(max(0.0, min(100.0, lo)), 1), round(max(0.0, min(100.0, hi)), 1)]
+
+
+async def _web_verify_results(results: list[dict]) -> tuple[list[dict], str]:
+    if not _TAVILY_AVAILABLE:
+        return results, "Web Verification: Skipped (service unavailable)"
+
+    try:
+        top3 = results[:3]
+        verified_count = 0
+        total_confirmed = 0
+        detail_parts: list[str] = []
+
+        for result in top3:
+            name = result.get("facility_name", "")
+            city = result.get("city", "")
+            caps = result.get("capabilities", [])
+
+            # Check pre-verified cache first
+            cache_key = (name.lower(), city.lower())
+            if cache_key in _web_cache:
+                wv = _web_cache[cache_key]
+            else:
+                # Live Tavily call with 5-second timeout
+                try:
+                    wv = await asyncio.wait_for(
+                        asyncio.to_thread(_tavily_verify, name, city, caps),
+                        timeout=5.0,
+                    )
+                except Exception:
+                    result["web_verified"] = None
+                    result["web_sources"] = []
+                    result["web_capabilities_confirmed"] = []
+                    result["web_capabilities_unconfirmed"] = []
+                    continue
+
+            confirmed = wv.get("capabilities_confirmed_by_web") or []
+            unconfirmed = wv.get("capabilities_not_found_on_web") or []
+            web_verified_flag: bool = bool(wv.get("web_verified", False))
+
+            result["web_verified"] = web_verified_flag
+            result["web_sources"] = wv.get("web_sources") or []
+            result["web_capabilities_confirmed"] = confirmed
+            result["web_capabilities_unconfirmed"] = unconfirmed
+
+            if "confidence_interval" in result:
+                result["confidence_interval"] = _adjust_ci(
+                    result["confidence_interval"], web_verified_flag, len(confirmed)
+                )
+
+            if web_verified_flag:
+                verified_count += 1
+            total_confirmed += len(confirmed)
+
+            n_src = wv.get("sources_found", 0)
+            if not web_verified_flag:
+                detail_parts.append(f"{name} not found on web")
+            elif len(confirmed) == 0:
+                detail_parts.append(
+                    f"{name} found on {n_src} sources but "
+                    f"{len(unconfirmed)} claimed capabilities have no web evidence"
+                )
+            else:
+                detail_parts.append(
+                    f"{name} verified on {n_src} sources ({len(confirmed)} caps confirmed)"
+                )
+
+        checked = sum(1 for r in top3 if r.get("web_verified") is not None)
+        detail = "; ".join(detail_parts) if detail_parts else "no detail available"
+        step = (
+            f"Web Verification: Checked {checked} facilities against public web. "
+            f"{verified_count} verified, {total_confirmed} capabilities confirmed by web sources. "
+            + detail + "."
+        )
+        return results, step
+
+    except Exception as exc:
+        return results, f"Web Verification: Skipped (error: {exc.__class__.__name__}: {str(exc)[:80]})"
+
+
+# ---------------------------------------------------------------------------
+# Step 5 — Composer
 # ---------------------------------------------------------------------------
 
 def _avg_ci(results: list[dict]) -> list[float]:
@@ -512,39 +737,85 @@ def _avg_ci(results: list[dict]) -> list[float]:
 # ---------------------------------------------------------------------------
 
 async def run_query(query: str) -> dict:
+    t0 = time.time()
     steps: list[str] = []
 
+    _root = _MlSpan("trustmap_query")
+    _root.log(query_text=query, timestamp=str(datetime.now()))
+
     # Step 1 — Plan
+    _sp1 = _MlSpan("1_planner")
     plan = await _plan(query)
     steps.append(f"Planning: [{plan.get('_source','llm')}] {plan['reasoning']}")
+    _sp1.log(
+        intent=plan["intent"],
+        num_capability_filters=len(plan.get("capability_filters", [])),
+        location=str((plan.get("location_filters") or {}).get("state")),
+        planner_source=plan.get("_source", "llm"),
+    )
+    _sp1.close()
 
     intent = plan["intent"]
+    _root.log(intent=intent)
 
     # Step 2 — Retrieve
+    _sp2 = _MlSpan("2_retriever")
     if intent == "find_deserts":
         candidates, retrieve_desc = _retrieve_deserts(plan)
     else:
         candidates, retrieve_desc = await _retrieve_facilities(query, plan)
     steps.append(f"Retrieving: {retrieve_desc}")
+    _sp2.log(num_candidates=len(candidates), retrieve_desc=retrieve_desc)
+    _sp2.close()
 
     if not candidates:
         steps.append("No results found.")
+        _root.log(num_results=0, total_time_ms=int((time.time() - t0) * 1000))
+        _root.close()
         return {"results": [], "reasoning_steps": steps, "confidence_interval": [0.0, 100.0], "plan": plan}
 
     # Step 3 — Validate
+    _sp3 = _MlSpan("3_validator")
     if intent == "find_deserts":
-        # Desert results are district-level stats — no facility YES/NO needed
         final = candidates[:5]
         steps.append(f"Validating: skipped for find_deserts, returning top {len(final)}")
+        _sp3.log(skipped=True, num_passed=len(final), num_rejected=0)
     else:
-        validated, val_steps = await _validate(query, candidates)
+        validated, val_steps = await _validate(query, candidates, intent)
         steps.extend(val_steps)
         n_pass, n_total = len(validated), len(candidates)
         steps.append(f"Validating: {n_pass}/{n_total} facilities confirmed as matching query")
         final = validated if validated else candidates[:3]
+        _sp3.log(num_passed=n_pass, num_rejected=n_total - n_pass, num_candidates=n_total)
+    _sp3.close()
 
-    # Step 4 — Compose
+    # Step 4 — Web Verification
+    _sp4 = _MlSpan("4_web_verification")
+    if intent in {"find_suspicious", "find_facilities"}:
+        final, web_step = await _web_verify_results(final)
+        steps.append(web_step)
+        n_verified = sum(1 for r in final if r.get("web_verified") is True)
+        n_sources = sum(len(r.get("web_sources", [])) for r in final)
+        _sp4.log(ran=True, num_verified=n_verified, num_sources_found=n_sources)
+    else:
+        steps.append("Web Verification: Skipped (not applicable for desert queries)")
+        _sp4.log(ran=False, reason="find_deserts")
+    _sp4.close()
+
+    # Step 5 — Compose
+    _sp5 = _MlSpan("5_composer")
     steps.append(f"Composing: returning {len(final)} results sorted by {plan['sort_by']}")
+    trust_scores = [r.get("trust_score", 0) for r in final if "trust_score" in r]
+    avg_trust = round(sum(trust_scores) / len(trust_scores), 1) if trust_scores else 0.0
+    total_ms = int((time.time() - t0) * 1000)
+    _sp5.log(num_results=len(final), avg_trust_score=avg_trust, total_time_ms=total_ms)
+    _sp5.close()
+
+    _root.log(num_results=len(final), avg_trust_score=avg_trust, total_time_ms=total_ms)
+    _root.close()
+
+    if MLFLOW_AVAILABLE:
+        print(f"[mlflow] Trace logged  intent={intent}  results={len(final)}  {total_ms}ms")
 
     return {
         "results": final,
@@ -566,7 +837,7 @@ def _print_response(query: str, resp: dict) -> None:
 
     p = resp.get("plan", {})
     src = p.get("_source", "llm")
-    print(f"\n[Planner — {src}]")
+    print(f"\n[Planner -- {src}]")
     print(f"  intent     : {p.get('intent')}")
     print(f"  caps       : {p.get('capability_filters')}")
     print(f"  state      : {(p.get('location_filters') or {}).get('state')}")
@@ -574,9 +845,9 @@ def _print_response(query: str, resp: dict) -> None:
     print(f"  reasoning  : {p.get('reasoning')}")
 
     steps = resp.get("reasoning_steps", [])
+    print("\n[Reasoning steps]")
     for s in steps:
-        if s.startswith("Retrieving:") or s.startswith("Validating:") or s.startswith("Composing:"):
-            print(f"\n{s}")
+        print(f"  {s}")
 
     results = resp.get("results", [])
     print(f"\nResults ({len(results)}):")
@@ -595,15 +866,23 @@ def _print_response(query: str, resp: dict) -> None:
             caps = r.get("capabilities", [])
             if caps:
                 print(f"       caps: {caps[:4]}")
+            wv = r.get("web_verified")
+            if wv is not None:
+                conf = r.get("web_capabilities_confirmed", [])
+                unconf = r.get("web_capabilities_unconfirmed", [])
+                src_count = len(r.get("web_sources", []))
+                print(f"       web_verified={wv}  sources={src_count}  "
+                      f"confirmed={conf}  unconfirmed={unconf}")
 
     print(f"\nAvg CI: {resp.get('confidence_interval')}")
 
 
 async def _main() -> None:
     queries = [
-        "Emergency C-section in rural Maharashtra",
         "Suspicious dental clinics in India",
+        "Emergency C-section in rural Maharashtra",
         "Worst dialysis deserts in India",
+        "Multi-specialty hospitals that look too good to be true",
     ]
     for q in queries:
         resp = await run_query(q)
