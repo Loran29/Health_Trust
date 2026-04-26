@@ -1,0 +1,9 @@
+INFO:     Started server process [12364]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+[api] Loaded: 10,017 assessments | 10,000 facilities | 10,000 joined | 2,364 districts
+INFO:     127.0.0.1:53351 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53354 - "POST /query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53404 - "GET /facility/1000-smiles-dental-clinic-hyderabad HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53406 - "GET /districts?state=Bihar HTTP/1.1" 200 OK

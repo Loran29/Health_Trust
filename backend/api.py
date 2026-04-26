@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Query as QueryParam
+from fastapi import FastAPI, HTTPException, Query as QueryParam, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -73,6 +73,19 @@ _assessments: pd.DataFrame | None = None   # indexed by facility_id
 _facilities: pd.DataFrame | None = None    # indexed by facility_id
 _merged: pd.DataFrame | None = None        # inner join, indexed by facility_id
 _districts: pd.DataFrame | None = None
+_districts_cache: list[dict] | None = None
+
+# 9 critical capabilities that actually exist as cap_* columns in districts parquet
+# "neonatal" is in the allowed UI list but NOT in ALL_CAPABILITIES — treated as always 0
+_CRITICAL_CAPS_IN_PARQUET = [
+    "anesthesia", "cardiology", "dialysis", "emergency",
+    "icu", "obstetrics", "oncology", "pediatrics", "surgery",
+]
+# Full allowed list for top_capability_gaps (10 items, neonatal included)
+_ALLOWED_GAPS = {
+    "anesthesia", "cardiology", "dialysis", "emergency",
+    "icu", "neonatal", "obstetrics", "oncology", "pediatrics", "surgery",
+}
 
 
 def _make_fid(name: Any, city: Any) -> str:
@@ -81,8 +94,95 @@ def _make_fid(name: Any, city: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "-", f"{n} {c}".lower()).strip("-")
 
 
+def _safe_float(val: Any, default: float = 0.0) -> float:
+    try:
+        f = float(val)
+        return default if f != f else f  # NaN → default
+    except (TypeError, ValueError):
+        return default
+
+
+def _safe_int_clamp(val: Any, lo: int = 0, hi: int = 100) -> int:
+    try:
+        return max(lo, min(hi, int(round(float(val)))))
+    except (TypeError, ValueError):
+        return lo
+
+
+def _build_districts_cache(df: pd.DataFrame) -> list[dict]:
+    """Pre-compute the districts response array once at startup."""
+    rows: list[dict] = []
+    for _, r in df.iterrows():
+        avg_trust = _safe_float(r.get("avg_trust_score"), 50.0)
+        num_facilities = int(r.get("total_facilities", 0) or 0)
+        population = _safe_float(r.get("population"), 0.0)
+
+        # Count critical caps with 0 confirmed/inferred facilities in district
+        num_unverified = 0
+        for cap in _CRITICAL_CAPS_IN_PARQUET:
+            col = f"cap_{cap}"
+            if col not in df.columns or _safe_int_clamp(r.get(col), 0, 10**9) == 0:
+                num_unverified += 1
+        # neonatal is never in parquet → always unverified
+        num_unverified += 1  # neonatal
+
+        # facilities_per_100k normalised
+        if population > 0:
+            per_100k = num_facilities / (population / 100_000)
+            fac_norm = min(1.0, per_100k / 10.0)
+        else:
+            fac_norm = 0.0
+
+        contradiction_density = (100.0 - avg_trust) / 100.0
+
+        desert_score = round(
+            0.40 * (100 - avg_trust)
+            + 0.30 * min(100, 20 * num_unverified)
+            + 0.20 * (1 - fac_norm) * 100
+            + 0.10 * contradiction_density * 100
+        )
+        desert_score = max(0, min(100, desert_score))
+
+        # top_capability_gaps: parse existing top_gaps, filter to allowed set,
+        # then pad with unverified critical caps sorted by cap count ascending
+        existing_gaps: list[str] = []
+        raw_gaps = r.get("top_gaps", "[]")
+        try:
+            parsed = json.loads(raw_gaps) if isinstance(raw_gaps, str) else (raw_gaps or [])
+            existing_gaps = [g for g in (parsed if isinstance(parsed, list) else []) if g in _ALLOWED_GAPS]
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+        # Add missing critical caps sorted by count asc (lowest coverage first)
+        cap_counts: list[tuple[int, str]] = []
+        for cap in _CRITICAL_CAPS_IN_PARQUET:
+            if cap not in existing_gaps:
+                col = f"cap_{cap}"
+                cnt = _safe_int_clamp(r.get(col), 0, 10**9) if col in df.columns else 0
+                cap_counts.append((cnt, cap))
+        cap_counts.sort()
+        for _, cap in cap_counts:
+            if cap not in existing_gaps:
+                existing_gaps.append(cap)
+        if "neonatal" not in existing_gaps:
+            existing_gaps.append("neonatal")
+
+        top_gaps = existing_gaps[:5]  # max 5
+
+        rows.append({
+            "state": str(r.get("state_clean", "") or ""),
+            "district": str(r.get("district", "") or ""),
+            "num_facilities": num_facilities,
+            "avg_trust_score": round(avg_trust, 1),
+            "desert_score": desert_score,
+            "top_capability_gaps": top_gaps,
+            "population": int(population) if population > 0 else None,
+        })
+    return rows
+
+
 def _load_data() -> None:
-    global _assessments, _facilities, _merged, _districts
+    global _assessments, _facilities, _merged, _districts, _districts_cache
     asmt = pd.read_parquet(ASSESSMENTS_PATH)
     fac = pd.read_parquet(FACILITIES_PATH)
     fac["facility_id"] = fac.apply(
@@ -95,6 +195,7 @@ def _load_data() -> None:
         .set_index("facility_id", drop=False)
     )
     _districts = pd.read_parquet(DISTRICTS_PATH)
+    _districts_cache = _build_districts_cache(_districts)
     print(
         f"[api] Loaded: {len(asmt):,} assessments | {len(fac):,} facilities | "
         f"{len(_merged):,} joined | {len(_districts):,} districts"
@@ -131,21 +232,6 @@ class QueryRequest(BaseModel):
 # ---------------------------------------------------------------------------
 # Serialisation helpers
 # ---------------------------------------------------------------------------
-
-def _safe_float(val: Any, default: float = 0.0) -> float:
-    try:
-        f = float(val)
-        return default if f != f else f  # NaN → default
-    except (TypeError, ValueError):
-        return default
-
-
-def _safe_int_clamp(val: Any, lo: int = 0, hi: int = 100) -> int:
-    try:
-        return max(lo, min(hi, int(round(float(val)))))
-    except (TypeError, ValueError):
-        return lo
-
 
 def _parse_json_list(raw: Any) -> list:
     if isinstance(raw, list):
@@ -400,23 +486,21 @@ def get_facility(facility_id: str) -> FacilityAssessment:
 def get_districts(
     state: str | None = QueryParam(default=None),
     capability: str | None = QueryParam(default=None),
-) -> dict:
-    if _districts is None:
-        return {"districts": []}
-
-    df = _districts.copy()
+) -> Response:
+    cache = _districts_cache or []
+    output = cache
 
     if state:
-        mask = df["state_clean"].str.lower() == state.lower()
-        if mask.any():
-            df = df[mask]
+        sl = state.lower()
+        output = [d for d in output if d["state"].lower() == sl]
 
     if capability:
-        col = f"cap_{capability.lower()}"
-        if col in df.columns:
-            df = df[df[col] > 0]
+        cap_lower = capability.lower()
+        # Filter to districts where that capability is listed as a gap
+        # (i.e. it's under-served in that district)
+        output = [d for d in output if cap_lower in d["top_capability_gaps"]]
 
-    return {"districts": _safe_serialise(df.to_dict(orient="records"))}
+    return Response(content=json.dumps(output), media_type="application/json")
 
 
 @app.get("/facility-pins")
@@ -435,7 +519,7 @@ def get_facility_pins() -> list[dict]:
     df = df[(df[lat_col] != 0.0) | (df[lon_col] != 0.0)]
 
     trust_col = "overall_trust_score_asmt" if "overall_trust_score_asmt" in df.columns else "overall_trust_score"
-    df = df.sort_values(trust_col, ascending=False).head(500)
+    df = df.sort_values(trust_col, ascending=False)
 
     pins = []
     for _, row in df.iterrows():

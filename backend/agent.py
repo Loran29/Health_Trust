@@ -186,6 +186,12 @@ def _get_chroma() -> chromadb.Collection:
     return _chroma_coll
 
 
+def _reset_chroma() -> chromadb.Collection:
+    global _chroma_coll
+    _chroma_coll = None
+    return _get_chroma()
+
+
 def _make_facility_id(name: Any, city: Any) -> str:
     n = "" if not name or str(name).lower() in {"nan", "none"} else str(name)
     c = "" if not city or str(city).lower() in {"nan", "none"} else str(city)
@@ -372,7 +378,14 @@ async def _retrieve_facilities(query: str, plan: dict) -> tuple[list[dict], str]
     try:
         res = coll.query(query_texts=[query], n_results=min(n_raw, coll.count()))
     except Exception as exc:
-        return [], f"ChromaDB error: {exc}"
+        if "does not exist" in str(exc):
+            try:
+                coll = _reset_chroma()
+                res = coll.query(query_texts=[query], n_results=min(n_raw, coll.count()))
+            except Exception as exc2:
+                return [], f"ChromaDB error: {exc2}"
+        else:
+            return [], f"ChromaDB error: {exc}"
 
     ids, metas, docs = res["ids"][0], res["metadatas"][0], res["documents"][0]
 

@@ -802,7 +802,7 @@ async def run_rerun_fallbacks() -> None:
     print(f"Fallback rows to rerun: {len(todo):,}")
     print(f"Non-fallback rows kept as-is: {len(non_fallback):,}")
 
-    semaphore = asyncio.Semaphore(FULL_CONCURRENCY)
+    semaphore = asyncio.Semaphore(5)
     run_prompt_tokens = 0
     run_completion_tokens = 0
     run_processed = 0
@@ -832,8 +832,15 @@ async def run_rerun_fallbacks() -> None:
         fallback_pct = (run_fallbacks / run_processed * 100) if run_processed else 0
         print(f"\nRerun checkpoint: {run_processed:,}/{len(todo):,} done | fallback rate: {fallback_pct:.1f}%")
 
-    print(f"\nRerun complete. {run_processed:,} rows reprocessed, {run_fallbacks:,} still fallback.")
-    print(f"Wall time: {format_seconds(time.perf_counter() - started_at)}")
+    succeeded = run_processed - run_fallbacks
+    total_fallbacks_remaining = sum(1 for r in records if r.get("has_fallback"))
+    full_quality = len(records) - total_fallbacks_remaining
+    print(f"\nRerun complete:")
+    print(f"  Succeeded this run : {succeeded:,} / {run_processed:,}")
+    print(f"  Still fallback     : {run_fallbacks:,}")
+    print(f"  Full-quality rows  : {full_quality:,} / {len(records):,} ({full_quality / len(records) * 100:.1f}%)")
+    print(f"  Cost this run      : ${cost_usd(run_prompt_tokens, run_completion_tokens):.4f}")
+    print(f"  Wall time          : {format_seconds(time.perf_counter() - started_at)}")
 
 
 def main() -> None:
