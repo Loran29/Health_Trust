@@ -262,12 +262,39 @@ def _get_llm() -> AsyncOpenAI:
     return _llm
 
 
+def _build_chroma(client: chromadb.ClientAPI) -> chromadb.Collection:
+    try:
+        from backend.vector_store import build_collection
+    except ImportError:
+        from vector_store import build_collection  # type: ignore[no-redef]
+
+    print("[agent] ChromaDB collection missing — rebuilding from parquet (~60s on first boot)...")
+    assessments = pd.read_parquet(ASSESSMENTS_PATH)
+    facilities = pd.read_parquet(FACILITIES_PATH)
+    facilities["facility_id"] = facilities.apply(
+        lambda r: _make_facility_id(r.get("name"), r.get("address_city")), axis=1
+    )
+    merged = assessments.merge(
+        facilities, on="facility_id", how="inner", suffixes=("_asmt", "_raw")
+    )
+    print(f"[agent] Indexing {len(merged):,} records into ChromaDB...")
+    CHROMA_PATH.mkdir(parents=True, exist_ok=True)
+    return build_collection(client, merged)
+
+
 def _get_chroma() -> chromadb.Collection:
     global _chroma_coll
     if _chroma_coll is None:
+        CHROMA_PATH.mkdir(parents=True, exist_ok=True)
         client = chromadb.PersistentClient(path=str(CHROMA_PATH))
         ef = DefaultEmbeddingFunction()
-        _chroma_coll = client.get_collection(COLLECTION_NAME, embedding_function=ef)
+        try:
+            coll = client.get_collection(COLLECTION_NAME, embedding_function=ef)
+            if coll.count() == 0:
+                coll = _build_chroma(client)
+        except Exception:
+            coll = _build_chroma(client)
+        _chroma_coll = coll
     return _chroma_coll
 
 
@@ -501,14 +528,7 @@ async def _retrieve_facilities(query: str, plan: dict) -> tuple[list[dict], str]
     try:
         res = coll.query(query_texts=[query], n_results=min(n_raw, coll.count()))
     except Exception as exc:
-        if "does not exist" in str(exc):
-            try:
-                coll = _reset_chroma()
-                res = coll.query(query_texts=[query], n_results=min(n_raw, coll.count()))
-            except Exception as exc2:
-                return [], f"ChromaDB error: {exc2}"
-        else:
-            return [], f"ChromaDB error: {exc}"
+        return [], f"ChromaDB error: {exc}"
 
     ids, metas, docs = res["ids"][0], res["metadatas"][0], res["documents"][0]
 
