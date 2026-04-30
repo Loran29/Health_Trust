@@ -220,6 +220,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+try:
+    from backend.auth import router as auth_router
+except ImportError:
+    from auth import router as auth_router  # type: ignore[no-redef]
+
+app.include_router(auth_router)
+
 
 # ---------------------------------------------------------------------------
 # Request model

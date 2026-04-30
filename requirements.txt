@@ -1,9 +1,13 @@
 pandas
 openpyxl
 pydantic
-anthropic
+openai
 fastapi
 uvicorn
 sentence-transformers
 chromadb
 python-dotenv
+passlib[bcrypt]
+bcrypt
+python-jose[cryptography]
+tavily-python

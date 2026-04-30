@@ -10,7 +10,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import anthropic
+import openai
+from openai import AsyncOpenAI
 import chromadb
 import pandas as pd
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
@@ -115,7 +116,7 @@ CHROMA_PATH = Path("backend/data/chroma_db")
 COLLECTION_NAME = "health_trust_facilities"
 
 # Use Haiku for speed and low cost; same proxy Claude Code uses
-LLM_MODEL = "claude-haiku-4-5-20251001"
+LLM_MODEL = "gpt-4o-mini"
 
 ALL_CAPABILITIES = [
     "emergency", "icu", "surgery", "obstetrics", "dialysis", "oncology",
@@ -227,7 +228,7 @@ def _heuristic_plan(query: str) -> dict:
 # Lazy-loaded singletons
 # ---------------------------------------------------------------------------
 
-_llm: anthropic.AsyncAnthropic | None = None
+_llm: AsyncOpenAI | None = None
 _chroma_coll: chromadb.Collection | None = None
 _merged_df: pd.DataFrame | None = None
 _districts_df: pd.DataFrame | None = None
@@ -254,12 +255,10 @@ def _load_web_cache() -> None:
 _load_web_cache()
 
 
-def _get_llm() -> anthropic.AsyncAnthropic:
+def _get_llm() -> AsyncOpenAI:
     global _llm
     if _llm is None:
-        base_url = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
-        auth_token = os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.environ.get("ANTHROPIC_API_KEY", "")
-        _llm = anthropic.AsyncAnthropic(base_url=base_url, auth_token=auth_token)
+        _llm = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
     return _llm
 
 
@@ -381,19 +380,21 @@ def _clean_plan(raw: dict) -> dict:
 
 async def _plan(query: str) -> dict:
     try:
-        msg = await _get_llm().messages.create(
+        msg = await _get_llm().chat.completions.create(
             model=LLM_MODEL,
-            system=PLANNER_SYSTEM,
-            messages=[{"role": "user", "content": query}],
+            messages=[
+                {"role": "system", "content": PLANNER_SYSTEM},
+                {"role": "user", "content": query},
+            ],
             max_tokens=400,
         )
-        raw_text = msg.content[0].text.strip()
+        raw_text = msg.choices[0].message.content.strip()
         # Strip ```json ... ``` if present
         match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
         raw_text = match.group(1) if match else raw_text
         plan = json.loads(raw_text)
         return _clean_plan(plan)
-    except (anthropic.APIError, anthropic.APIConnectionError) as exc:
+    except (openai.APIError, openai.APIConnectionError) as exc:
         print(f"  [LLM unavailable: {exc.__class__.__name__}] Using heuristic planner.")
         return _heuristic_plan(query)
     except (json.JSONDecodeError, IndexError):
@@ -603,12 +604,12 @@ async def _validate_one(query: str, candidate: dict, intent: str) -> tuple[bool,
             "Does this facility match what the user is looking for? Reply YES or NO with one sentence."
         )
     try:
-        msg = await _get_llm().messages.create(
+        msg = await _get_llm().chat.completions.create(
             model=LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=80,
         )
-        text = msg.content[0].text.strip()
+        text = msg.choices[0].message.content.strip()
         return text.upper().startswith("YES"), text
     except Exception as exc:
         return True, f"Validation skipped ({exc.__class__.__name__})"

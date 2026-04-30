@@ -7,6 +7,7 @@ to flag facilities whose claimed capabilities have no real-world evidence.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -37,7 +38,7 @@ except ImportError:
 ASSESSMENTS_PATH = Path("backend/data/assessments_llm.parquet")
 VERIFICATIONS_PATH = Path("backend/data/web_verifications.json")
 
-TAVILY_API_KEY = "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"
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
 
 # Capability keywords used to scan web result text
 _CAP_KEYWORDS: dict[str, list[str]] = {
